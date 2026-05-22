@@ -345,7 +345,7 @@
         <div class="item-list" id="storyList"></div>
     </div>
 
-    <!-- ==================== দোয়া ট্যাব (নতুন) ==================== -->
+    <!-- ==================== দোয়া ট্যাব ==================== -->
     <div id="duaTab" class="tab-content">
         <h2>🤲 দোয়া ম্যানেজমেন্ট</h2>
         
@@ -429,7 +429,12 @@
 <script src="data.js"></script>
 <script>
     // ==================== গ্লোবাল ভেরিয়েবল ====================
-    let editingData;
+    let editingData = {
+        quran: [],
+        hadith: [],
+        story: [],
+        dua: []
+    };
     let currentQuranTopicIndex = -1;
     let currentHadithTopicIndex = -1;
     let currentStoryTopicIndex = -1;
@@ -442,19 +447,28 @@
         { id: "isha", name: "ইশা", icon: "⭐" }
     ];
     
+    // ==================== ডাটা লোড ====================
     function loadDataFromStorage() {
+        // প্রথমে data.js থেকে ডিফল্ট লোড
+        if(window.appData) {
+            editingData = {
+                quran: JSON.parse(JSON.stringify(window.appData.quran || [])),
+                hadith: JSON.parse(JSON.stringify(window.appData.hadith || [])),
+                story: JSON.parse(JSON.stringify(window.appData.story || [])),
+                dua: JSON.parse(JSON.stringify(window.appData.dua || []))
+            };
+        }
+        
+        // লোকাল স্টোরেজ থেকে সেভ করা ডাটা লোড
         const saved = localStorage.getItem("admin_editingData");
         if(saved) {
-            editingData = JSON.parse(saved);
-        } else {
-            editingData = JSON.parse(JSON.stringify(window.appData));
+            const parsed = JSON.parse(saved);
+            if(parsed.quran) editingData.quran = parsed.quran;
+            if(parsed.hadith) editingData.hadith = parsed.hadith;
+            if(parsed.story) editingData.story = parsed.story;
+            if(parsed.dua) editingData.dua = parsed.dua;
         }
-        if(!editingData.quran) editingData.quran = [];
-        if(!editingData.hadith) editingData.hadith = [];
-        if(!editingData.story) editingData.story = [];
-        if(!editingData.dua) editingData.dua = [];
     }
-    loadDataFromStorage();
     
     function syncEditingDataToStorage() {
         localStorage.setItem("admin_editingData", JSON.stringify(editingData));
@@ -500,10 +514,12 @@
         const select = document.getElementById('quranTopicSelect');
         if(!select) return;
         select.innerHTML = '<option value="-1">-- নতুন টপিক তৈরি করুন --</option>';
-        editingData.quran.forEach((topic, idx) => {
-            select.innerHTML += `<option value="${idx}">${escapeHtml(topic.topic)}</option>`;
-        });
-        if(currentQuranTopicIndex >= 0 && currentQuranTopicIndex < editingData.quran.length) {
+        if(editingData.quran) {
+            editingData.quran.forEach((topic, idx) => {
+                select.innerHTML += `<option value="${idx}">${escapeHtml(topic.topic)}</option>`;
+            });
+        }
+        if(currentQuranTopicIndex >= 0 && currentQuranTopicIndex < (editingData.quran ? editingData.quran.length : 0)) {
             select.value = currentQuranTopicIndex;
         } else {
             currentQuranTopicIndex = -1;
@@ -641,10 +657,12 @@
         const select = document.getElementById('hadithTopicSelect');
         if(!select) return;
         select.innerHTML = '<option value="-1">-- নতুন টপিক তৈরি করুন --</option>';
-        editingData.hadith.forEach((topic, idx) => {
-            select.innerHTML += `<option value="${idx}">${escapeHtml(topic.topic)}</option>`;
-        });
-        if(currentHadithTopicIndex >= 0 && currentHadithTopicIndex < editingData.hadith.length) {
+        if(editingData.hadith) {
+            editingData.hadith.forEach((topic, idx) => {
+                select.innerHTML += `<option value="${idx}">${escapeHtml(topic.topic)}</option>`;
+            });
+        }
+        if(currentHadithTopicIndex >= 0 && currentHadithTopicIndex < (editingData.hadith ? editingData.hadith.length : 0)) {
             select.value = currentHadithTopicIndex;
         } else {
             currentHadithTopicIndex = -1;
@@ -779,10 +797,12 @@
         const select = document.getElementById('storyTopicSelect');
         if(!select) return;
         select.innerHTML = '<option value="-1">-- নতুন টপিক তৈরি করুন --</option>';
-        editingData.story.forEach((topic, idx) => {
-            select.innerHTML += `<option value="${idx}">${escapeHtml(topic.topic)}</option>`;
-        });
-        if(currentStoryTopicIndex >= 0 && currentStoryTopicIndex < editingData.story.length) {
+        if(editingData.story) {
+            editingData.story.forEach((topic, idx) => {
+                select.innerHTML += `<option value="${idx}">${escapeHtml(topic.topic)}</option>`;
+            });
+        }
+        if(currentStoryTopicIndex >= 0 && currentStoryTopicIndex < (editingData.story ? editingData.story.length : 0)) {
             select.value = currentStoryTopicIndex;
         } else {
             currentStoryTopicIndex = -1;
@@ -912,15 +932,17 @@
         document.getElementById('storySource').value = '';
     }
     
-    // ==================== দোয়া ম্যানেজমেন্ট (নতুন) ====================
+    // ==================== দোয়া ম্যানেজমেন্ট ====================
     function loadDuaTopics() {
         const select = document.getElementById('duaTopicSelect');
         if(!select) return;
         select.innerHTML = '<option value="-1">-- নতুন টপিক তৈরি করুন --</option>';
-        editingData.dua.forEach((topic, idx) => {
-            select.innerHTML += `<option value="${idx}">${escapeHtml(topic.topic)}</option>`;
-        });
-        if(currentDuaTopicIndex >= 0 && currentDuaTopicIndex < editingData.dua.length) {
+        if(editingData.dua) {
+            editingData.dua.forEach((topic, idx) => {
+                select.innerHTML += `<option value="${idx}">${escapeHtml(topic.topic)}</option>`;
+            });
+        }
+        if(currentDuaTopicIndex >= 0 && currentDuaTopicIndex < (editingData.dua ? editingData.dua.length : 0)) {
             select.value = currentDuaTopicIndex;
         } else {
             currentDuaTopicIndex = -1;
@@ -1207,6 +1229,8 @@
     }
     
     // ==================== পেজ লোড ====================
+    loadDataFromStorage();
+    
     window.onload = () => {
         loadQuranTopics();
         loadHadithTopics();
