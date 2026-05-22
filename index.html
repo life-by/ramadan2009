@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ইসলামিক ডায়েরি</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #059669; --bg-color: #f0fdf4; --card-bg: #ffffff; --text-main: #1f2937; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Hind Siliguri', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 500px; background: var(--bg-color); min-height: 100vh; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 0 0 15px 15px; }
+        .nav-tabs { display: flex; gap: 5px; padding: 15px; justify-content: center; flex-wrap: wrap; }
+        .tab-btn { background: var(--card-bg); border: 1px solid #ddd; padding: 8px; border-radius: 8px; cursor: pointer; flex: 1; text-align: center; font-weight: bold; min-width: 70px; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .content-area { padding: 15px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .category-card { background: white; padding: 15px; border-radius: 10px; border: 1px solid #ddd; text-align: center; cursor: pointer; font-weight: bold; transition: transform 0.2s; }
+        .category-card:hover { transform: scale(1.02); background: #f9fafb; }
+        .detail-view { display: none; background: white; padding: 20px; border-radius: 10px; border-left: 4px solid var(--primary); margin-top: 10px; }
+        .btn-back { background: #6b7280; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 15px; }
+        .arabic { font-size: 22px; text-align: right; color: var(--primary); margin: 15px 0; }
+        .source { display: block; margin-top: 10px; font-size: 13px; color: gray; }
+        .verse-item, .hadith-item, .story-item, .dua-item { background: #f9fafb; padding: 15px; border-radius: 10px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; border-left: 3px solid var(--primary); }
+        .verse-item:hover, .hadith-item:hover, .story-item:hover, .dua-item:hover { background: #f0fdf4; }
+        .verse-title, .hadith-title, .story-title, .dua-title { font-weight: 600; color: var(--primary); margin-bottom: 5px; }
+        .verse-preview, .hadith-preview, .story-preview, .dua-preview { font-size: 13px; color: #6b7280; }
+        
+        .prayer-list { background: white; border-radius: 10px; overflow: hidden; }
+        .prayer-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; transition: background 0.2s; }
+        .prayer-item:hover { background: #f9fafb; }
+        .prayer-name { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .prayer-name span { font-size: 22px; }
+        .prayer-checkbox { width: 28px; height: 28px; cursor: pointer; accent-color: var(--primary); }
+        .prayer-completed .prayer-name { text-decoration: line-through; color: #888; }
+        .reset-btn { background: #ef4444; color: white; padding: 8px 15px; border: none; border-radius: 8px; cursor: pointer; margin-top: 15px; width: 100%; font-weight: bold; }
+        .stats { background: var(--primary); color: white; padding: 12px; border-radius: 10px; text-align: center; margin-bottom: 15px; font-weight: bold; }
+        
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header><h1 id="headerTitle">ইসলামিক ডায়েরি</h1></header>
+
+    <div class="nav-tabs">
+        <div class="tab-btn active" data-tab="quran">📖 কুরআন</div>
+        <div class="tab-btn" data-tab="hadith">📚 হাদিস</div>
+        <div class="tab-btn" data-tab="story">📜 গল্প</div>
+        <div class="tab-btn" data-tab="dua">🤲 দোয়া</div>
+        <div class="tab-btn" data-tab="prayer">🕌 নামাজ</div>
+    </div>
+
+    <div class="content-area">
+        <!-- ==================== কুরআন ট্যাব ==================== -->
+        <div id="quran" class="tab-content active">
+            <div id="quranTopicsView">
+                <div id="quranTopicsList" class="category-grid"></div>
+            </div>
+            <div id="quranVersesView" class="hidden">
+                <button class="btn-back" onclick="showQuranTopics()">⬅ টপিকে ফিরুন</button>
+                <h3 id="quranTopicTitle" style="margin-bottom: 15px;"></h3>
+                <div id="quranVersesList"></div>
+            </div>
+            <div id="quranDetailView" class="hidden">
+                <button class="btn-back" onclick="showQuranVerses()">⬅ আয়াতে ফিরুন</button>
+                <div class="arabic" id="quranDetailArabic"></div>
+                <div id="quranDetailMeaning"></div>
+                <div class="source" id="quranDetailSource"></div>
+            </div>
+        </div>
+
+        <!-- ==================== হাদিস ট্যাব ==================== -->
+        <div id="hadith" class="tab-content">
+            <div id="hadithTopicsView">
+                <div id="hadithTopicsList" class="category-grid"></div>
+            </div>
+            <div id="hadithItemsView" class="hidden">
+                <button class="btn-back" onclick="showHadithTopics()">⬅ টপিকে ফিরুন</button>
+                <h3 id="hadithTopicTitle" style="margin-bottom: 15px;"></h3>
+                <div id="hadithItemsList"></div>
+            </div>
+            <div id="hadithDetailView" class="hidden">
+                <button class="btn-back" onclick="showHadithItems()">⬅ তালিকায় ফিরুন</button>
+                <div id="hadithDetailMeaning"></div>
+                <div class="source" id="hadithDetailSource"></div>
+            </div>
+        </div>
+
+        <!-- ==================== গল্প ট্যাব ==================== -->
+        <div id="story" class="tab-content">
+            <div id="storyTopicsView">
+                <div id="storyTopicsList" class="category-grid"></div>
+            </div>
+            <div id="storyItemsView" class="hidden">
+                <button class="btn-back" onclick="showStoryTopics()">⬅ টপিকে ফিরুন</button>
+                <h3 id="storyTopicTitle" style="margin-bottom: 15px;"></h3>
+                <div id="storyItemsList"></div>
+            </div>
+            <div id="storyDetailView" class="hidden">
+                <button class="btn-back" onclick="showStoryItems()">⬅ তালিকায় ফিরুন</button>
+                <div id="storyDetailMeaning"></div>
+                <div class="source" id="storyDetailSource"></div>
+            </div>
+        </div>
+
+        <!-- ==================== দোয়া ট্যাব (নতুন) ==================== -->
+        <div id="dua" class="tab-content">
+            <div id="duaTopicsView">
+                <div id="duaTopicsList" class="category-grid"></div>
+            </div>
+            <div id="duaItemsView" class="hidden">
+                <button class="btn-back" onclick="showDuaTopics()">⬅ টপিকে ফিরুন</button>
+                <h3 id="duaTopicTitle" style="margin-bottom: 15px;"></h3>
+                <div id="duaItemsList"></div>
+            </div>
+            <div id="duaDetailView" class="hidden">
+                <button class="btn-back" onclick="showDuaItems()">⬅ তালিকায় ফিরুন</button>
+                <div class="arabic" id="duaDetailArabic"></div>
+                <div id="duaDetailMeaning"></div>
+                <div class="source" id="duaDetailSource"></div>
+            </div>
+        </div>
+
+        <!-- ==================== নামাজ ট্যাব ==================== -->
+        <div id="prayer" class="tab-content">
+            <div class="stats" id="prayerStats">📊 আজ পড়েছেন: 0/5</div>
+            <div class="prayer-list" id="prayerList"></div>
+            <button class="reset-btn" onclick="resetPrayers()">⟳ সব রিসেট করুন</button>
+        </div>
+    </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+    // ==================== ডাটা লোড ====================
+    let appDataFromStorage = null;
+    let prayers = [];
+    
+    function loadAppData() {
+        const saved = localStorage.getItem("admin_editingData");
+        if(saved) {
+            appDataFromStorage = JSON.parse(saved);
+        } else {
+            appDataFromStorage = window.appData;
+        }
+        if(!appDataFromStorage.quran) appDataFromStorage.quran = [];
+        if(!appDataFromStorage.hadith) appDataFromStorage.hadith = [];
+        if(!appDataFromStorage.story) appDataFromStorage.story = [];
+        if(!appDataFromStorage.dua) appDataFromStorage.dua = [];
+    }
+    loadAppData();
+    
+    function loadPrayersFromStorage() {
+        const saved = localStorage.getItem("admin_prayerSettings");
+        if(saved) {
+            prayers = JSON.parse(saved);
+        } else {
+            prayers = [
+                { id: "fajr", name: "ফজর", icon: "🌅" },
+                { id: "dhuhr", name: "যোহর", icon: "☀️" },
+                { id: "asr", name: "আসর", icon: "🌤️" },
+                { id: "maghrib", name: "মাগরিব", icon: "🌙" },
+                { id: "isha", name: "ইশা", icon: "⭐" }
+            ];
+        }
+    }
+    loadPrayersFromStorage();
+    
+    function loadTheme() {
+        const saved = localStorage.getItem("admin_themeSettings");
+        if(saved) {
+            const theme = JSON.parse(saved);
+            if(theme.primaryColor) {
+                document.documentElement.style.setProperty('--primary', theme.primaryColor);
+            }
+            if(theme.headerText) {
+                document.getElementById('headerTitle').innerText = theme.headerText;
+            }
+        }
+    }
+    loadTheme();
+    
+    // ==================== ট্যাব ফাংশন ====================
+    function openTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+        
+        if(tabId === 'quran') {
+            showQuranTopics();
+            loadQuranTopics();
+        }
+        if(tabId === 'hadith') {
+            showHadithTopics();
+            loadHadithTopics();
+        }
+        if(tabId === 'story') {
+            showStoryTopics();
+            loadStoryTopics();
+        }
+        if(tabId === 'dua') {
+            showDuaTopics();
+            loadDuaTopics();
+        }
+        if(tabId === 'prayer') renderPrayerList();
+    }
+    
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => openTab(btn.getAttribute('data-tab')));
+    });
+    
+    // ==================== কুরআন ফাংশন ====================
+    let currentQuranTopicIndex = null;
+    let currentQuranVerseIndex = null;
+    
+    function showQuranTopics() {
+        document.getElementById('quranTopicsView').classList.remove('hidden');
+        document.getElementById('quranVersesView').classList.add('hidden');
+        document.getElementById('quranDetailView').classList.add('hidden');
+        currentQuranTopicIndex = null;
+        currentQuranVerseIndex = null;
+    }
+    
+    function showQuranVerses() {
+        document.getElementById('quranTopicsView').classList.add('hidden');
+        document.getElementById('quranVersesView').classList.remove('hidden');
+        document.getElementById('quranDetailView').classList.add('hidden');
+    }
+    
+    function showQuranDetail() {
+        document.getElementById('quranTopicsView').classList.add('hidden');
+        document.getElementById('quranVersesView').classList.add('hidden');
+        document.getElementById('quranDetailView').classList.remove('hidden');
+    }
+    
+    function loadQuranTopics() {
+        const container = document.getElementById('quranTopicsList');
+        if(!container) return;
+        container.innerHTML = '';
+        if(!appDataFromStorage.quran || appDataFromStorage.quran.length === 0) {
+            container.innerHTML = '<p style="color: gray; text-align: center;">কোনো টপিক নেই। অ্যাডমিন প্যানেল থেকে যোগ করুন।</p>';
+            return;
+        }
+        appDataFromStorage.quran.forEach((topic, idx) => {
+            const card = document.createElement('div');
+            card.className = 'category-card';
+            card.innerHTML = `<div style="font-size: 18px;">📖 ${escapeHtml(topic.topic)}</div><small style="color: gray;">${topic.verses ? topic.verses.length : 0} টি আয়াত</small>`;
+            card.onclick = () => loadQuranVerses(idx);
+            container.appendChild(card);
+        });
+    }
+    
+    function loadQuranVerses(topicIndex) {
+        currentQuranTopicIndex = topicIndex;
+        const topic = appDataFromStorage.quran[topicIndex];
+        document.getElementById('quranTopicTitle').innerHTML = `📖 ${escapeHtml(topic.topic)}`;
+        
+        const container = document.getElementById('quranVersesList');
+        container.innerHTML = '';
+        if(!topic.verses || topic.verses.length === 0) {
+            container.innerHTML = '<p style="color: gray;">কোনো আয়াত নেই।</p>';
+        } else {
+            topic.verses.forEach((verse, idx) => {
+                const div = document.createElement('div');
+                div.className = 'verse-item';
+                div.innerHTML = `
+                    <div class="verse-title">আয়াত ${idx + 1}</div>
+                    <div class="verse-preview">${escapeHtml(verse.meaning.substring(0, 100))}...</div>
+                `;
+                div.onclick = () => showQuranDetailContent(idx);
+                container.appendChild(div);
+            });
+        }
+        showQuranVerses();
+    }
+    
+    function showQuranDetailContent(verseIndex) {
+        currentQuranVerseIndex = verseIndex;
+        const verse = appDataFromStorage.quran[currentQuranTopicIndex].verses[verseIndex];
+        document.getElementById('quranDetailArabic').innerHTML = verse.arabic || '';
+        document.getElementById('quranDetailMeaning').innerHTML = verse.meaning;
+        document.getElementById('quranDetailSource').innerHTML = verse.source ? `- ${verse.source}` : '';
+        showQuranDetail();
+    }
+    
+    // ==================== হাদিস ফাংশন ====================
+    let currentHadithTopicIndex = null;
+    let currentHadithItemIndex = null;
+    
+    function showHadithTopics() {
+        document.getElementById('hadithTopicsView').classList.remove('hidden');
+        document.getElementById('hadithItemsView').classList.add('hidden');
+        document.getElementById('hadithDetailView').classList.add('hidden');
+        currentHadithTopicIndex = null;
+        currentHadithItemIndex = null;
+    }
+    
+    function showHadithItems() {
+        document.getElementById('hadithTopicsView').classList.add('hidden');
+        document.getElementById('hadithItemsView').classList.remove('hidden');
+        document.getElementById('hadithDetailView').classList.add('hidden');
+    }
+    
+    function showHadithDetail() {
+        document.getElementById('hadithTopicsView').classList.add('hidden');
+        document.getElementById('hadithItemsView').classList.add('hidden');
+        document.getElementById('hadithDetailView').classList.remove('hidden');
+    }
+    
+    function loadHadithTopics() {
+        const container = document.getElementById('hadithTopicsList');
+        if(!container) return;
+        container.innerHTML = '';
+        if(!appDataFromStorage.hadith || appDataFromStorage.hadith.length === 0) {
+            container.innerHTML = '<p style="color: gray; text-align: center;">কোনো টপিক নেই। অ্যাডমিন প্যানেল থেকে যোগ করুন।</p>';
+            return;
+        }
+        appDataFromStorage.hadith.forEach((topic, idx) => {
+            const card = document.createElement('div');
+            card.className = 'category-card';
+            card.innerHTML = `<div style="font-size: 18px;">📚 ${escapeHtml(topic.topic)}</div><small style="color: gray;">${topic.hadiths ? topic.hadiths.length : 0} টি হাদিস</small>`;
+            card.onclick = () => loadHadithItems(idx);
+            container.appendChild(card);
+        });
+    }
+    
+    function loadHadithItems(topicIndex) {
+        currentHadithTopicIndex = topicIndex;
+        const topic = appDataFromStorage.hadith[topicIndex];
+        document.getElementById('hadithTopicTitle').innerHTML = `📚 ${escapeHtml(topic.topic)}`;
+        
+        const container = document.getElementById('hadithItemsList');
+        container.innerHTML = '';
+        if(!topic.hadiths || topic.hadiths.length === 0) {
+            container.innerHTML = '<p style="color: gray;">কোনো হাদিস নেই।</p>';
+        } else {
+            topic.hadiths.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'hadith-item';
+                div.innerHTML = `
+                    <div class="hadith-title">হাদিস ${idx + 1}</div>
+                    <div class="hadith-preview">${escapeHtml(item.meaning.substring(0, 100))}...</div>
+                `;
+                div.onclick = () => showHadithDetailContent(idx);
+                container.appendChild(div);
+            });
+        }
+        showHadithItems();
+    }
+    
+    function showHadithDetailContent(itemIndex) {
+        currentHadithItemIndex = itemIndex;
+        const item = appDataFromStorage.hadith[currentHadithTopicIndex].hadiths[itemIndex];
+        document.getElementById('hadithDetailMeaning').innerHTML = item.meaning;
+        document.getElementById('hadithDetailSource').innerHTML = item.source ? `- ${item.source}` : '';
+        showHadithDetail();
+    }
+    
+    // ==================== গল্প ফাংশন ====================
+    let currentStoryTopicIndex = null;
+    let currentStoryItemIndex = null;
+    
+    function showStoryTopics() {
+        document.getElementById('storyTopicsView').classList.remove('hidden');
+        document.getElementById('storyItemsView').classList.add('hidden');
+        document.getElementById('storyDetailView').classList.add('hidden');
+        currentStoryTopicIndex = null;
+        currentStoryItemIndex = null;
+    }
+    
+    function showStoryItems() {
+        document.getElementById('storyTopicsView').classList.add('hidden');
+        document.getElementById('storyItemsView').classList.remove('hidden');
+        document.getElementById('storyDetailView').classList.add('hidden');
+    }
+    
+    function showStoryDetail() {
+        document.getElementById('storyTopicsView').classList.add('hidden');
+        document.getElementById('storyItemsView').classList.add('hidden');
+        document.getElementById('storyDetailView').classList.remove('hidden');
+    }
+    
+    function loadStoryTopics() {
+        const container = document.getElementById('storyTopicsList');
+        if(!container) return;
+        container.innerHTML = '';
+        if(!appDataFromStorage.story || appDataFromStorage.story.length === 0) {
+            container.innerHTML = '<p style="color: gray; text-align: center;">কোনো টপিক নেই। অ্যাডমিন প্যানেল থেকে যোগ করুন।</p>';
+            return;
+        }
+        appDataFromStorage.story.forEach((topic, idx) => {
+            const card = document.createElement('div');
+            card.className = 'category-card';
+            card.innerHTML = `<div style="font-size: 18px;">📜 ${escapeHtml(topic.topic)}</div><small style="color: gray;">${topic.stories ? topic.stories.length : 0} টি গল্প</small>`;
+            card.onclick = () => loadStoryItems(idx);
+            container.appendChild(card);
+        });
+    }
+    
+    function loadStoryItems(topicIndex) {
+        currentStoryTopicIndex = topicIndex;
+        const topic = appDataFromStorage.story[topicIndex];
+        document.getElementById('storyTopicTitle').innerHTML = `📜 ${escapeHtml(topic.topic)}`;
+        
+        const container = document.getElementById('storyItemsList');
+        container.innerHTML = '';
+        if(!topic.stories || topic.stories.length === 0) {
+            container.innerHTML = '<p style="color: gray;">কোনো গল্প নেই।</p>';
+        } else {
+            topic.stories.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'story-item';
+                div.innerHTML = `
+                    <div class="story-title">গল্প ${idx + 1}</div>
+                    <div class="story-preview">${escapeHtml(item.meaning.substring(0, 100))}...</div>
+                `;
+                div.onclick = () => showStoryDetailContent(idx);
+                container.appendChild(div);
+            });
+        }
+        showStoryItems();
+    }
+    
+    function showStoryDetailContent(itemIndex) {
+        currentStoryItemIndex = itemIndex;
+        const item = appDataFromStorage.story[currentStoryTopicIndex].stories[itemIndex];
+        document.getElementById('storyDetailMeaning').innerHTML = item.meaning;
+        document.getElementById('storyDetailSource').innerHTML = item.source ? `- ${item.source}` : '';
+        showStoryDetail();
+    }
+    
+    // ==================== দোয়া ফাংশন (নতুন) ====================
+    let currentDuaTopicIndex = null;
+    let currentDuaItemIndex = null;
+    
+    function showDuaTopics() {
+        document.getElementById('duaTopicsView').classList.remove('hidden');
+        document.getElementById('duaItemsView').classList.add('hidden');
+        document.getElementById('duaDetailView').classList.add('hidden');
+        currentDuaTopicIndex = null;
+        currentDuaItemIndex = null;
+    }
+    
+    function showDuaItems() {
+        document.getElementById('duaTopicsView').classList.add('hidden');
+        document.getElementById('duaItemsView').classList.remove('hidden');
+        document.getElementById('duaDetailView').classList.add('hidden');
+    }
+    
+    function showDuaDetail() {
+        document.getElementById('duaTopicsView').classList.add('hidden');
+        document.getElementById('duaItemsView').classList.add('hidden');
+        document.getElementById('duaDetailView').classList.remove('hidden');
+    }
+    
+    function loadDuaTopics() {
+        const container = document.getElementById('duaTopicsList');
+        if(!container) return;
+        container.innerHTML = '';
+        if(!appDataFromStorage.dua || appDataFromStorage.dua.length === 0) {
+            container.innerHTML = '<p style="color: gray; text-align: center;">কোনো টপিক নেই। অ্যাডমিন প্যানেল থেকে যোগ করুন।</p>';
+            return;
+        }
+        appDataFromStorage.dua.forEach((topic, idx) => {
+            const card = document.createElement('div');
+            card.className = 'category-card';
+            card.innerHTML = `<div style="font-size: 18px;">🤲 ${escapeHtml(topic.topic)}</div><small style="color: gray;">${topic.duas ? topic.duas.length : 0} টি দোয়া</small>`;
+            card.onclick = () => loadDuaItems(idx);
+            container.appendChild(card);
+        });
+    }
+    
+    function loadDuaItems(topicIndex) {
+        currentDuaTopicIndex = topicIndex;
+        const topic = appDataFromStorage.dua[topicIndex];
+        document.getElementById('duaTopicTitle').innerHTML = `🤲 ${escapeHtml(topic.topic)}`;
+        
+        const container = document.getElementById('duaItemsList');
+        container.innerHTML = '';
+        if(!topic.duas || topic.duas.length === 0) {
+            container.innerHTML = '<p style="color: gray;">কোনো দোয়া নেই।</p>';
+        } else {
+            topic.duas.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'dua-item';
+                div.innerHTML = `
+                    <div class="dua-title">দোয়া ${idx + 1}</div>
+                    <div class="dua-preview">${escapeHtml(item.meaning.substring(0, 100))}...</div>
+                `;
+                div.onclick = () => showDuaDetailContent(idx);
+                container.appendChild(div);
+            });
+        }
+        showDuaItems();
+    }
+    
+    function showDuaDetailContent(itemIndex) {
+        currentDuaItemIndex = itemIndex;
+        const item = appDataFromStorage.dua[currentDuaTopicIndex].duas[itemIndex];
+        document.getElementById('duaDetailArabic').innerHTML = item.arabic || '';
+        document.getElementById('duaDetailMeaning').innerHTML = item.meaning;
+        document.getElementById('duaDetailSource').innerHTML = item.source ? `- ${item.source}` : '';
+        showDuaDetail();
+    }
+    
+    // ==================== নামাজ ফাংশন ====================
+    function loadPrayerStatus() {
+        const saved = localStorage.getItem("prayerStatus");
+        if (saved) return JSON.parse(saved);
+        const defaultStatus = {};
+        prayers.forEach(p => defaultStatus[p.id] = false);
+        return defaultStatus;
+    }
+    
+    function savePrayerStatus(status) {
+        localStorage.setItem("prayerStatus", JSON.stringify(status));
+    }
+    
+    function renderPrayerList() {
+        const status = loadPrayerStatus();
+        let completedCount = 0;
+        const container = document.getElementById("prayerList");
+        if (!container) return;
+        container.innerHTML = "";
+        prayers.forEach(prayer => {
+            const isChecked = status[prayer.id];
+            if (isChecked) completedCount++;
+            const div = document.createElement("div");
+            div.className = "prayer-item" + (isChecked ? " prayer-completed" : "");
+            div.innerHTML = `
+                <div class="prayer-name"><span>${prayer.icon}</span>${prayer.name}</div>
+                <input type="checkbox" class="prayer-checkbox" ${isChecked ? "checked" : ""} onchange="togglePrayer('${prayer.id}')">
+            `;
+            container.appendChild(div);
+        });
+        const statsEl = document.getElementById("prayerStats");
+        if (statsEl) statsEl.innerHTML = `📊 আজ পড়েছেন: ${completedCount}/${prayers.length}`;
+    }
+    
+    function togglePrayer(prayerId) {
+        const status = loadPrayerStatus();
+        status[prayerId] = !status[prayerId];
+        savePrayerStatus(status);
+        renderPrayerList();
+    }
+    
+    function resetPrayers() {
+        if (confirm("সব নামাজের স্ট্যাটাস রিসেট করতে চান?")) {
+            const resetStatus = {};
+            prayers.forEach(p => resetStatus[p.id] = false);
+            savePrayerStatus(resetStatus);
+            renderPrayerList();
+        }
+    }
+    
+    // ==================== ইউটিলিটি ====================
+    function escapeHtml(str) {
+        if(!str) return '';
+        return String(str).replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // ==================== পেজ লোড ====================
+    window.onload = () => {
+        loadQuranTopics();
+        loadHadithTopics();
+        loadStoryTopics();
+        loadDuaTopics();
+        renderPrayerList();
+    };
+</script>
+</body>
+</html>
