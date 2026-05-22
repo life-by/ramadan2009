@@ -108,7 +108,7 @@
             </div>
         </div>
 
-        <!-- ==================== দোয়া ট্যাব (নতুন) ==================== -->
+        <!-- ==================== দোয়া ট্যাব ==================== -->
         <div id="dua" class="tab-content">
             <div id="duaTopicsView">
                 <div id="duaTopicsList" class="category-grid"></div>
@@ -137,23 +137,51 @@
 
 <script src="data.js"></script>
 <script>
-    // ==================== ডাটা লোড ====================
-    let appDataFromStorage = null;
+    // ==================== গ্লোবাল ভেরিয়েবল ====================
+    let appDataFromStorage = {
+        quran: [],
+        hadith: [],
+        story: [],
+        dua: []
+    };
     let prayers = [];
     
+    // ==================== ডাটা লোড ফাংশন ====================
     function loadAppData() {
+        // প্রথমে data.js থেকে ডিফল্ট ডাটা লোড
+        if(window.appData) {
+            appDataFromStorage = {
+                quran: window.appData.quran || [],
+                hadith: window.appData.hadith || [],
+                story: window.appData.story || [],
+                dua: window.appData.dua || []
+            };
+        }
+        
+        // এরপর লোকাল স্টোরেজ থেকে সেভ করা ডাটা লোড (যদি থাকে)
         const saved = localStorage.getItem("admin_editingData");
         if(saved) {
-            appDataFromStorage = JSON.parse(saved);
-        } else {
-            appDataFromStorage = window.appData;
+            const parsed = JSON.parse(saved);
+            if(parsed.quran) appDataFromStorage.quran = parsed.quran;
+            if(parsed.hadith) appDataFromStorage.hadith = parsed.hadith;
+            if(parsed.story) appDataFromStorage.story = parsed.story;
+            if(parsed.dua) appDataFromStorage.dua = parsed.dua;
         }
-        if(!appDataFromStorage.quran) appDataFromStorage.quran = [];
-        if(!appDataFromStorage.hadith) appDataFromStorage.hadith = [];
-        if(!appDataFromStorage.story) appDataFromStorage.story = [];
-        if(!appDataFromStorage.dua) appDataFromStorage.dua = [];
+        
+        // ডাটা খালি থাকলে ডিফল্ট সেট করুন
+        if(!appDataFromStorage.quran || appDataFromStorage.quran.length === 0) {
+            appDataFromStorage.quran = [];
+        }
+        if(!appDataFromStorage.hadith || appDataFromStorage.hadith.length === 0) {
+            appDataFromStorage.hadith = [];
+        }
+        if(!appDataFromStorage.story || appDataFromStorage.story.length === 0) {
+            appDataFromStorage.story = [];
+        }
+        if(!appDataFromStorage.dua || appDataFromStorage.dua.length === 0) {
+            appDataFromStorage.dua = [];
+        }
     }
-    loadAppData();
     
     function loadPrayersFromStorage() {
         const saved = localStorage.getItem("admin_prayerSettings");
@@ -169,7 +197,6 @@
             ];
         }
     }
-    loadPrayersFromStorage();
     
     function loadTheme() {
         const saved = localStorage.getItem("admin_themeSettings");
@@ -183,6 +210,10 @@
             }
         }
     }
+    
+    // ==================== সব ডাটা লোড করুন ====================
+    loadAppData();
+    loadPrayersFromStorage();
     loadTheme();
     
     // ==================== ট্যাব ফাংশন ====================
@@ -435,7 +466,7 @@
         showStoryDetail();
     }
     
-    // ==================== দোয়া ফাংশন (নতুন) ====================
+    // ==================== দোয়া ফাংশন ====================
     let currentDuaTopicIndex = null;
     let currentDuaItemIndex = null;
     
