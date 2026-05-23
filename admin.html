@@ -447,15 +447,14 @@
         { id: "isha", name: "ইশা", icon: "⭐" }
     ];
     
-    // ==================== ডাটা লোড ====================
-    function loadDataFromStorage() {
-        // প্রথমে data.js থেকে ডিফল্ট লোড
-        if(window.appData) {
+function loadDataFromStorage() {
+        // প্রথমে data.js থেকে ডিফল্ট লোড (পরিবর্তিত কোড)
+        if(typeof appData !== 'undefined') {
             editingData = {
-                quran: JSON.parse(JSON.stringify(window.appData.quran || [])),
-                hadith: JSON.parse(JSON.stringify(window.appData.hadith || [])),
-                story: JSON.parse(JSON.stringify(window.appData.story || [])),
-                dua: JSON.parse(JSON.stringify(window.appData.dua || []))
+                quran: JSON.parse(JSON.stringify(appData.quran || [])),
+                hadith: JSON.parse(JSON.stringify(appData.hadith || [])),
+                story: JSON.parse(JSON.stringify(appData.story || [])),
+                dua: JSON.parse(JSON.stringify(appData.dua || []))
             };
         }
         
@@ -463,10 +462,10 @@
         const saved = localStorage.getItem("admin_editingData");
         if(saved) {
             const parsed = JSON.parse(saved);
-            if(parsed.quran) editingData.quran = parsed.quran;
-            if(parsed.hadith) editingData.hadith = parsed.hadith;
-            if(parsed.story) editingData.story = parsed.story;
-            if(parsed.dua) editingData.dua = parsed.dua;
+            if(parsed.quran && parsed.quran.length > 0) editingData.quran = parsed.quran;
+            if(parsed.hadith && parsed.hadith.length > 0) editingData.hadith = parsed.hadith;
+            if(parsed.story && parsed.story.length > 0) editingData.story = parsed.story;
+            if(parsed.dua && parsed.dua.length > 0) editingData.dua = parsed.dua;
         }
     }
     
