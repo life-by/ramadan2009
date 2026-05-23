@@ -146,15 +146,14 @@
     };
     let prayers = [];
     
-    // ==================== ডাটা লোড ফাংশন ====================
-    function loadAppData() {
-        // প্রথমে data.js থেকে ডিফল্ট ডাটা লোড
-        if(window.appData) {
+function loadAppData() {
+        // প্রথমে data.js থেকে ডিফল্ট ডাটা লোড (পরিবর্তিত কোড)
+        if(typeof appData !== 'undefined') {
             appDataFromStorage = {
-                quran: window.appData.quran || [],
-                hadith: window.appData.hadith || [],
-                story: window.appData.story || [],
-                dua: window.appData.dua || []
+                quran: appData.quran || [],
+                hadith: appData.hadith || [],
+                story: appData.story || [],
+                dua: appData.dua || []
             };
         }
         
@@ -162,25 +161,17 @@
         const saved = localStorage.getItem("admin_editingData");
         if(saved) {
             const parsed = JSON.parse(saved);
-            if(parsed.quran) appDataFromStorage.quran = parsed.quran;
-            if(parsed.hadith) appDataFromStorage.hadith = parsed.hadith;
-            if(parsed.story) appDataFromStorage.story = parsed.story;
-            if(parsed.dua) appDataFromStorage.dua = parsed.dua;
+            if(parsed.quran && parsed.quran.length > 0) appDataFromStorage.quran = parsed.quran;
+            if(parsed.hadith && parsed.hadith.length > 0) appDataFromStorage.hadith = parsed.hadith;
+            if(parsed.story && parsed.story.length > 0) appDataFromStorage.story = parsed.story;
+            if(parsed.dua && parsed.dua.length > 0) appDataFromStorage.dua = parsed.dua;
         }
         
         // ডাটা খালি থাকলে ডিফল্ট সেট করুন
-        if(!appDataFromStorage.quran || appDataFromStorage.quran.length === 0) {
-            appDataFromStorage.quran = [];
-        }
-        if(!appDataFromStorage.hadith || appDataFromStorage.hadith.length === 0) {
-            appDataFromStorage.hadith = [];
-        }
-        if(!appDataFromStorage.story || appDataFromStorage.story.length === 0) {
-            appDataFromStorage.story = [];
-        }
-        if(!appDataFromStorage.dua || appDataFromStorage.dua.length === 0) {
-            appDataFromStorage.dua = [];
-        }
+        if(!appDataFromStorage.quran) appDataFromStorage.quran = [];
+        if(!appDataFromStorage.hadith) appDataFromStorage.hadith = [];
+        if(!appDataFromStorage.story) appDataFromStorage.story = [];
+        if(!appDataFromStorage.dua) appDataFromStorage.dua = [];
     }
     
     function loadPrayersFromStorage() {
