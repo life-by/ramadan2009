@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ইসলামিক ডায়েরি</title>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- PDF.js Library for Professional PDF Rendering -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
         :root { --primary: #059669; --bg-color: #f0fdf4; --card-bg: #ffffff; --text-main: #1f2937; }
@@ -14,7 +13,7 @@
         .app-container { width: 100%; max-width: 500px; background: var(--bg-color); min-height: 100vh; box-shadow: 0 0 15px rgba(0,0,0,0.1); position: relative;}
         header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 0 0 15px 15px; }
         .nav-tabs { display: flex; gap: 5px; padding: 15px; justify-content: center; flex-wrap: wrap; }
-        .tab-btn { background: var(--card-bg); border: 1px solid #ddd; padding: 8px; border-radius: 8px; cursor: pointer; flex: 1; text-align: center; font-weight: bold; min-width: 70px; }
+        .tab-btn { background: var(--card-bg); border: 1px solid #ddd; padding: 6px; border-radius: 8px; cursor: pointer; flex: 1; text-align: center; font-weight: bold; min-width: 65px; font-size:14px; }
         .tab-btn.active { background: var(--primary); color: white; }
         .content-area { padding: 15px; }
         .tab-content { display: none; }
@@ -44,14 +43,12 @@
         .pdf-filter-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
         .pdf-filter-btn { flex: 1; padding: 8px; border: 1px solid var(--primary); background: transparent; color: var(--primary); border-radius: 8px; cursor: pointer; font-weight: bold; }
         .pdf-filter-btn.active { background: var(--primary); color: white; }
-        
         .pdf-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .pdf-card { background: white; border-radius: 10px; overflow: hidden; border: 1px solid #ddd; position: relative; cursor: pointer; transition: transform 0.2s; }
         .pdf-card:hover { transform: scale(1.02); }
         .pdf-thumb { width: 100%; height: 140px; object-fit: cover; background: #eee; border-bottom: 1px solid #eee; }
         .pdf-info { padding: 10px; text-align: center; }
         .pdf-title { font-weight: bold; font-size: 14px; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        
         .fav-btn { position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; }
         .fav-btn.active { color: red; }
 
@@ -64,11 +61,18 @@
         .pdf-controls { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: bold; }
         .pdf-canvas-container { flex: 1; overflow: auto; background: #525659; display: flex; justify-content: center; padding: 15px; }
         #pdfRender { max-width: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        
         #pdfFallbackMsg { background: #fef3c7; color: #92400e; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; display: none; }
         .pdf-iframe { width: 100%; flex: 1; border: none; background: white; display: none; }
-        
         #saveToast { position: absolute; top: 60px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 8px 20px; border-radius: 20px; font-size: 12px; font-weight: bold; display: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        /* Report / Diary Styles */
+        .report-summary-box { background: white; padding: 15px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 15px; }
+        .report-summary-box p { margin-bottom: 5px; font-size: 14px; font-weight: 600; }
+        .report-summary-box span { font-weight: normal; color: gray; }
+        .diary-note-area { width: 100%; height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; margin-bottom: 10px; resize: vertical; }
+        .send-btn { background: #3b82f6; color: white; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; margin-bottom: 20px; }
+        .history-card { background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6; margin-bottom: 10px; font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
+        .history-date { font-weight: bold; color: var(--primary); margin-bottom: 5px; display: block; border-bottom: 1px solid #eee; padding-bottom: 5px; }
         
         .hidden { display: none !important; }
     </style>
@@ -85,96 +89,58 @@
         <div class="tab-btn" data-tab="dua">🤲 দোয়া</div>
         <div class="tab-btn" data-tab="pdf">📕 পিডিএফ</div>
         <div class="tab-btn" data-tab="prayer">🕌 নামাজ</div>
+        <div class="tab-btn" data-tab="report" style="background:#dbeafe; color:#1e40af; border-color:#bfdbfe;">📝 ডায়েরি</div>
     </div>
 
     <div class="content-area">
-        <!-- ==================== কুরআন, হাদিস, গল্প, দোয়া, নামাজ (আগের কোড) ==================== -->
-        <div id="quran" class="tab-content active">
-            <div id="quranTopicsView"><div id="quranTopicsList" class="category-grid"></div></div>
-            <div id="quranVersesView" class="hidden">
-                <button class="btn-back" onclick="showQuranTopics()">⬅ টপিকে ফিরুন</button>
-                <h3 id="quranTopicTitle" style="margin-bottom: 15px;"></h3><div id="quranVersesList"></div>
-            </div>
-            <div id="quranDetailView" class="hidden">
-                <button class="btn-back" onclick="showQuranVerses()">⬅ আয়াতে ফিরুন</button>
-                <div class="arabic" id="quranDetailArabic"></div><div id="quranDetailMeaning"></div><div class="source" id="quranDetailSource"></div>
-            </div>
-        </div>
+        <!-- কুরআন, হাদিস, গল্প, দোয়া -->
+        <div id="quran" class="tab-content active"><div id="quranTopicsView"><div id="quranTopicsList" class="category-grid"></div></div><div id="quranVersesView" class="hidden"><button class="btn-back" onclick="showQuranTopics()">⬅ টপিকে ফিরুন</button><h3 id="quranTopicTitle" style="margin-bottom: 15px;"></h3><div id="quranVersesList"></div></div><div id="quranDetailView" class="hidden"><button class="btn-back" onclick="showQuranVerses()">⬅ আয়াতে ফিরুন</button><div class="arabic" id="quranDetailArabic"></div><div id="quranDetailMeaning"></div><div class="source" id="quranDetailSource"></div></div></div>
+        <div id="hadith" class="tab-content"><div id="hadithTopicsView"><div id="hadithTopicsList" class="category-grid"></div></div><div id="hadithItemsView" class="hidden"><button class="btn-back" onclick="showHadithTopics()">⬅ টপিকে ফিরুন</button><h3 id="hadithTopicTitle" style="margin-bottom: 15px;"></h3><div id="hadithItemsList"></div></div><div id="hadithDetailView" class="hidden"><button class="btn-back" onclick="showHadithItems()">⬅ তালিকায় ফিরুন</button><div id="hadithDetailMeaning"></div><div class="source" id="hadithDetailSource"></div></div></div>
+        <div id="story" class="tab-content"><div id="storyTopicsView"><div id="storyTopicsList" class="category-grid"></div></div><div id="storyItemsView" class="hidden"><button class="btn-back" onclick="showStoryTopics()">⬅ টপিকে ফিরুন</button><h3 id="storyTopicTitle" style="margin-bottom: 15px;"></h3><div id="storyItemsList"></div></div><div id="storyDetailView" class="hidden"><button class="btn-back" onclick="showStoryItems()">⬅ তালিকায় ফিরুন</button><div id="storyDetailMeaning"></div><div class="source" id="storyDetailSource"></div></div></div>
+        <div id="dua" class="tab-content"><div id="duaTopicsView"><div id="duaTopicsList" class="category-grid"></div></div><div id="duaItemsView" class="hidden"><button class="btn-back" onclick="showDuaTopics()">⬅ টপিকে ফিরুন</button><h3 id="duaTopicTitle" style="margin-bottom: 15px;"></h3><div id="duaItemsList"></div></div><div id="duaDetailView" class="hidden"><button class="btn-back" onclick="showDuaItems()">⬅ তালিকায় ফিরুন</button><div class="arabic" id="duaDetailArabic"></div><div id="duaDetailMeaning"></div><div class="source" id="duaDetailSource"></div></div></div>
 
-        <div id="hadith" class="tab-content">
-            <div id="hadithTopicsView"><div id="hadithTopicsList" class="category-grid"></div></div>
-            <div id="hadithItemsView" class="hidden">
-                <button class="btn-back" onclick="showHadithTopics()">⬅ টপিকে ফিরুন</button>
-                <h3 id="hadithTopicTitle" style="margin-bottom: 15px;"></h3><div id="hadithItemsList"></div>
-            </div>
-            <div id="hadithDetailView" class="hidden">
-                <button class="btn-back" onclick="showHadithItems()">⬅ তালিকায় ফিরুন</button>
-                <div id="hadithDetailMeaning"></div><div class="source" id="hadithDetailSource"></div>
-            </div>
-        </div>
-
-        <div id="story" class="tab-content">
-            <div id="storyTopicsView"><div id="storyTopicsList" class="category-grid"></div></div>
-            <div id="storyItemsView" class="hidden">
-                <button class="btn-back" onclick="showStoryTopics()">⬅ টপিকে ফিরুন</button>
-                <h3 id="storyTopicTitle" style="margin-bottom: 15px;"></h3><div id="storyItemsList"></div>
-            </div>
-            <div id="storyDetailView" class="hidden">
-                <button class="btn-back" onclick="showStoryItems()">⬅ তালিকায় ফিরুন</button>
-                <div id="storyDetailMeaning"></div><div class="source" id="storyDetailSource"></div>
-            </div>
-        </div>
-
-        <div id="dua" class="tab-content">
-            <div id="duaTopicsView"><div id="duaTopicsList" class="category-grid"></div></div>
-            <div id="duaItemsView" class="hidden">
-                <button class="btn-back" onclick="showDuaTopics()">⬅ টপিকে ফিরুন</button>
-                <h3 id="duaTopicTitle" style="margin-bottom: 15px;"></h3><div id="duaItemsList"></div>
-            </div>
-            <div id="duaDetailView" class="hidden">
-                <button class="btn-back" onclick="showDuaItems()">⬅ তালিকায় ফিরুন</button>
-                <div class="arabic" id="duaDetailArabic"></div><div id="duaDetailMeaning"></div><div class="source" id="duaDetailSource"></div>
-            </div>
-        </div>
-
-        <!-- ==================== পিডিএফ রিডার ট্যাব (নতুন প্রফেশনাল ভিউ) ==================== -->
+        <!-- পিডিএফ রিডার -->
         <div id="pdf" class="tab-content">
-            <div class="pdf-filter-tabs">
-                <button class="pdf-filter-btn active" id="btnAllPdf" onclick="filterPdfs('all')">সব পিডিএফ</button>
-                <button class="pdf-filter-btn" id="btnFavPdf" onclick="filterPdfs('fav')">প্রিয় ❤️</button>
-            </div>
-            
+            <div class="pdf-filter-tabs"><button class="pdf-filter-btn active" id="btnAllPdf" onclick="filterPdfs('all')">সব পিডিএফ</button><button class="pdf-filter-btn" id="btnFavPdf" onclick="filterPdfs('fav')">প্রিয় ❤️</button></div>
             <div id="pdfListView" class="pdf-grid"></div>
         </div>
 
-        <!-- PDF Reader Full Screen View -->
+        <!-- PDF Reader Full Screen -->
         <div id="pdfReadView" class="hidden">
             <div class="pdf-toolbar">
                 <button onclick="closePdf()">✖ বন্ধ করুন</button>
-                <div class="pdf-controls">
-                    <button onclick="onPrevPage()">◀</button>
-                    <span><span id="page_num">1</span> / <span id="page_count">?</span></span>
-                    <button onclick="onNextPage()">▶</button>
-                </div>
+                <div class="pdf-controls"><button onclick="onPrevPage()">◀</button><span><span id="page_num">1</span> / <span id="page_count">?</span></span><button onclick="onNextPage()">▶</button></div>
                 <button class="save-btn" onclick="saveAutoBookmark()">🔖 সেভ</button>
             </div>
-            
             <div id="pdfFallbackMsg">⚠️ এই পিডিএফটি সরাসরি সাপোর্ট করছে না। নিচে বিকল্প ভিউয়ারে ওপেন হলো।</div>
-            
-            <div class="pdf-canvas-container" id="canvasContainer">
-                <canvas id="pdfRender"></canvas>
-            </div>
-            <!-- Fallback iframe for external CORS blocked PDFs -->
+            <div class="pdf-canvas-container" id="canvasContainer"><canvas id="pdfRender"></canvas></div>
             <iframe id="pdfIframeFallback" class="pdf-iframe"></iframe>
-            
             <div id="saveToast">✅ পেজ সেভ হয়েছে!</div>
         </div>
 
-        <!-- ==================== নামাজ ট্যাব ==================== -->
+        <!-- নামাজ ট্যাব -->
         <div id="prayer" class="tab-content">
             <div class="stats" id="prayerStats">📊 আজ পড়েছেন: 0/5</div>
             <div class="prayer-list" id="prayerList"></div>
             <button class="reset-btn" onclick="resetPrayers()">⟳ সব রিসেট করুন</button>
+        </div>
+
+        <!-- ডায়েরি / রিপোর্ট ট্যাব (নতুন) -->
+        <div id="report" class="tab-content">
+            <h3 style="color: var(--primary); margin-bottom:15px; text-align:center;">📊 আজকের ডায়েরি ও রিপোর্ট</h3>
+            
+            <div class="report-summary-box" id="dailySummaryBox">
+                <!-- Javascript will inject summary here -->
+            </div>
+            
+            <textarea id="reportNote" class="diary-note-area" placeholder="আজকের দিন কেমন কাটলো বা কোনো স্পেশাল নোট এখানে লিখতে পারেন..."></textarea>
+            
+            <button class="send-btn" onclick="sendAndSaveReport()">💾 সেভ করুন এবং ✈️ টেলিগ্রামে পাঠান</button>
+            
+            <h3 style="color: gray; margin-bottom:10px; border-bottom: 1px solid #ddd; padding-bottom:5px;">আগের হিস্ট্রি:</h3>
+            <div id="diaryHistoryList">
+                <!-- Javascript will inject history here -->
+            </div>
         </div>
     </div>
 </div>
@@ -182,7 +148,7 @@
 <script src="./data.js"></script>
 <script>
     // ==================== গ্লোবাল ভেরিয়েবল ====================
-    let appDataFromStorage = { quran: [], hadith: [], story: [], dua: [], pdfs: [] };
+    let appDataFromStorage = { quran: [], hadith: [], story: [], dua: [], pdfs: [], telegram: {} };
     let prayers = [];
     let favoritePdfs = JSON.parse(localStorage.getItem('user_favorite_pdfs')) || [];
     let currentFilter = 'all';
@@ -195,32 +161,21 @@
     // ==================== ডাটা লোড ====================
     function loadAppData() {
         if(typeof appData !== 'undefined') {
-            appDataFromStorage = {
-                quran: appData.quran || [], hadith: appData.hadith || [],
-                story: appData.story || [], dua: appData.dua || [], pdfs: appData.pdfs || []
-            };
+            appDataFromStorage = { quran: appData.quran||[], hadith: appData.hadith||[], story: appData.story||[], dua: appData.dua||[], pdfs: appData.pdfs||[], telegram: appData.telegram||{} };
         }
         const saved = localStorage.getItem("admin_editingData");
         if(saved) {
             const parsed = JSON.parse(saved);
-            if(parsed.quran && parsed.quran.length > 0) appDataFromStorage.quran = parsed.quran;
-            if(parsed.hadith && parsed.hadith.length > 0) appDataFromStorage.hadith = parsed.hadith;
-            if(parsed.story && parsed.story.length > 0) appDataFromStorage.story = parsed.story;
-            if(parsed.dua && parsed.dua.length > 0) appDataFromStorage.dua = parsed.dua;
-            if(parsed.pdfs && parsed.pdfs.length > 0) appDataFromStorage.pdfs = parsed.pdfs;
+            if(parsed.quran) appDataFromStorage.quran = parsed.quran; if(parsed.hadith) appDataFromStorage.hadith = parsed.hadith;
+            if(parsed.story) appDataFromStorage.story = parsed.story; if(parsed.dua) appDataFromStorage.dua = parsed.dua;
+            if(parsed.pdfs) appDataFromStorage.pdfs = parsed.pdfs; if(parsed.telegram) appDataFromStorage.telegram = parsed.telegram;
         }
-        if(!appDataFromStorage.quran) appDataFromStorage.quran = [];
-        if(!appDataFromStorage.hadith) appDataFromStorage.hadith = [];
-        if(!appDataFromStorage.story) appDataFromStorage.story = [];
-        if(!appDataFromStorage.dua) appDataFromStorage.dua = [];
-        if(!appDataFromStorage.pdfs) appDataFromStorage.pdfs = [];
     }
     
     function loadPrayersFromStorage() {
         const saved = localStorage.getItem("admin_prayerSettings");
-        if(saved) { prayers = JSON.parse(saved); } else {
-            prayers = [{ id: "fajr", name: "ফজর", icon: "🌅" }, { id: "dhuhr", name: "যোহর", icon: "☀️" }, { id: "asr", name: "আসর", icon: "🌤️" }, { id: "maghrib", name: "মাগরিব", icon: "🌙" }, { id: "isha", name: "ইশা", icon: "⭐" }];
-        }
+        if(saved) prayers = JSON.parse(saved); 
+        else prayers = [{ id: "fajr", name: "ফজর", icon: "🌅" }, { id: "dhuhr", name: "যোহর", icon: "☀️" }, { id: "asr", name: "আসর", icon: "🌤️" }, { id: "maghrib", name: "মাগরিব", icon: "🌙" }, { id: "isha", name: "ইশা", icon: "⭐" }];
     }
     
     function loadTheme() {
@@ -233,6 +188,25 @@
     }
     
     loadAppData(); loadPrayersFromStorage(); loadTheme();
+
+    // ==================== ট্র্যাকিং ইঞ্জিন (Daily Read Track) ====================
+    function getTodayString() { return new Date().toLocaleDateString('en-GB'); } // Output: DD/MM/YYYY
+    
+    function loadTracking() {
+        let today = getTodayString();
+        let saved = JSON.parse(localStorage.getItem('daily_read_tracking')) || {};
+        if(saved.date !== today) {
+            saved = { date: today, quran: false, hadith: false, story: false, dua: false, pdf: false };
+            localStorage.setItem('daily_read_tracking', JSON.stringify(saved));
+        }
+        return saved;
+    }
+    
+    function markTrack(type) {
+        let track = loadTracking();
+        track[type] = true;
+        localStorage.setItem('daily_read_tracking', JSON.stringify(track));
+    }
     
     // ==================== ট্যাব ফাংশন ====================
     function openTab(tabId) {
@@ -247,171 +221,162 @@
         if(tabId === 'dua') { showDuaTopics(); loadDuaTopics(); }
         if(tabId === 'pdf') { filterPdfs(currentFilter); }
         if(tabId === 'prayer') { renderPrayerList(); }
+        if(tabId === 'report') { renderReportTab(); }
     }
     
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => openTab(btn.getAttribute('data-tab')));
-    });
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => openTab(btn.getAttribute('data-tab'))));
 
-    // ==================== পিডিএফ রিডার (নতুন প্রফেশনাল লজিক) ====================
-    function filterPdfs(type) {
-        currentFilter = type;
-        document.getElementById('btnAllPdf').classList.toggle('active', type === 'all');
-        document.getElementById('btnFavPdf').classList.toggle('active', type === 'fav');
-        loadPdfList();
+    // ==================== ডায়েরি ও রিপোর্ট লজিক (নতুন) ====================
+    function renderReportTab() {
+        let track = loadTracking();
+        let pStatus = loadPrayerStatus();
+        let completedPrayers = prayers.filter(p => pStatus[p.id]).map(p => p.name);
+        let prayerText = completedPrayers.length > 0 ? completedPrayers.join(', ') : 'কোনোটি পড়া হয়নি';
+
+        document.getElementById('dailySummaryBox').innerHTML = `
+            <p>🕌 নামাজ: <span>${prayerText}</span></p>
+            <p>📖 কুরআন: <span>${track.quran ? 'পড়েছি ✅' : 'পড়িনি ❌'}</span></p>
+            <p>📚 হাদিস: <span>${track.hadith ? 'পড়েছি ✅' : 'পড়িনি ❌'}</span></p>
+            <p>📜 গল্প: <span>${track.story ? 'পড়েছি ✅' : 'পড়িনি ❌'}</span></p>
+            <p>🤲 দোয়া: <span>${track.dua ? 'পড়েছি ✅' : 'পড়িনি ❌'}</span></p>
+            <p>📕 পিডিএফ: <span>${track.pdf ? 'পড়েছি ✅' : 'পড়িনি ❌'}</span></p>
+        `;
+        renderReportHistory();
     }
 
-    function toggleFavorite(event, index) {
-        event.stopPropagation(); // কার্ডের ক্লিক ইভেন্ট বন্ধ করা
-        const favIndex = favoritePdfs.indexOf(index);
-        if(favIndex > -1) { favoritePdfs.splice(favIndex, 1); } 
-        else { favoritePdfs.push(index); }
-        localStorage.setItem('user_favorite_pdfs', JSON.stringify(favoritePdfs));
-        loadPdfList();
-    }
-
-    function loadPdfList() {
-        const container = document.getElementById('pdfListView');
-        if(!container) return;
-        container.innerHTML = '';
+    function sendAndSaveReport() {
+        let note = document.getElementById('reportNote').value.trim();
+        let track = loadTracking();
+        let pStatus = loadPrayerStatus();
+        let completedPrayers = prayers.filter(p => pStatus[p.id]).map(p => p.name).join(', ') || 'কোনোটি পড়া হয়নি';
         
-        let hasPdfs = false;
-        appDataFromStorage.pdfs.forEach((pdf, idx) => {
-            const isFav = favoritePdfs.includes(idx);
-            if(currentFilter === 'fav' && !isFav) return;
-            
-            hasPdfs = true;
-            const card = document.createElement('div');
-            card.className = 'pdf-card';
-            card.onclick = () => openPdfReader(idx);
-            
-            const favIcon = isFav ? '❤️' : '🤍';
-            const favClass = isFav ? 'fav-btn active' : 'fav-btn';
-            
-            card.innerHTML = `
-                <button class="${favClass}" onclick="toggleFavorite(event, ${idx})">${favIcon}</button>
-                <img src="${escapeHtml(pdf.thumb)}" class="pdf-thumb" alt="${escapeHtml(pdf.title)}" onerror="this.src='https://via.placeholder.com/150?text=PDF'">
-                <div class="pdf-info"><div class="pdf-title">${escapeHtml(pdf.title)}</div></div>
-            `;
-            container.appendChild(card);
-        });
+        let msg = `📝 *দৈনিক রিপোর্ট* (${track.date})\n\n` +
+                  `🕌 *নামাজ:* ${completedPrayers}\n` +
+                  `📖 *কুরআন:* ${track.quran ? 'পড়েছি ✅' : 'পড়িনি ❌'}\n` +
+                  `📚 *হাদিস:* ${track.hadith ? 'পড়েছি ✅' : 'পড়িনি ❌'}\n` +
+                  `📜 *গল্প:* ${track.story ? 'পড়েছি ✅' : 'পড়িনি ❌'}\n` +
+                  `🤲 *দোয়া:* ${track.dua ? 'পড়েছি ✅' : 'পড়িনি ❌'}\n` +
+                  `📕 *পিডিএফ:* ${track.pdf ? 'পড়েছি ✅' : 'পড়িনি ❌'}\n\n` +
+                  `✍️ *নোট:* ${note || 'কোনো নোট নেই'}`;
 
-        if(!hasPdfs) {
-            container.innerHTML = `<p style="color: gray; grid-column: span 2; text-align: center;">${currentFilter === 'fav' ? 'কোনো প্রিয় পিডিএফ নেই।' : 'কোনো পিডিএফ যোগ করা হয়নি।'}</p>`;
+        // Local Storage-এ সেভ করা
+        let history = JSON.parse(localStorage.getItem('user_diary_history')) || [];
+        history.unshift({ date: track.date, report: msg, time: new Date().toLocaleTimeString('en-US') });
+        localStorage.setItem('user_diary_history', JSON.stringify(history));
+
+        // Telegram-এ পাঠানো
+        let tg = appDataFromStorage.telegram || {};
+        if(tg.token && tg.chatId) {
+            let url = `https://api.telegram.org/bot${tg.token}/sendMessage`;
+            fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ chat_id: tg.chatId, text: msg, parse_mode: 'Markdown' })
+            }).then(res => res.json()).then(data => {
+                if(data.ok) alert('✅ টেলিগ্রামে পাঠানো হয়েছে এবং ডায়েরি সেভ হয়েছে!');
+                else alert('⚠️ টেলিগ্রামে পাঠাতে সমস্যা হয়েছে, তবে ডায়েরি সেভ হয়েছে!');
+            }).catch(err => alert('⚠️ ইন্টারনেট কানেকশন চেক করুন, ডায়েরি লোকালি সেভ হয়েছে!'));
+        } else {
+            alert('✅ ডায়েরি সফলভাবে সেভ হয়েছে!\n(টেলিগ্রাম সেটআপ করা নেই বলে মেসেজ যায়নি)');
         }
+
+        document.getElementById('reportNote').value = '';
+        renderReportHistory();
     }
 
-    // PDF.js Rendering Functions
-    const renderPage = num => {
-        pageIsRendering = true;
-        pdfDoc.getPage(num).then(page => {
-            const viewport = page.getViewport({ scale });
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
+    function renderReportHistory() {
+        let history = JSON.parse(localStorage.getItem('user_diary_history')) || [];
+        let listContainer = document.getElementById('diaryHistoryList');
+        listContainer.innerHTML = '';
+        
+        if(history.length === 0) {
+            listContainer.innerHTML = '<p style="color:gray; text-align:center;">কোনো হিস্ট্রি পাওয়া যায়নি</p>';
+            return;
+        }
 
-            const renderCtx = { canvasContext: ctx, viewport: viewport };
-            page.render(renderCtx).promise.then(() => {
-                pageIsRendering = false;
-                if(pageNumPending !== null) { renderPage(pageNumPending); pageNumPending = null; }
-            });
-            document.getElementById('page_num').textContent = num;
+        history.forEach(item => {
+            let card = document.createElement('div');
+            card.className = 'history-card';
+            // টেলিগ্রামের মার্কডাউন রিমুভ করে সুন্দরভাবে দেখানো
+            let formattedText = item.report.replace(/\*/g, '').replace(/\n/g, '<br>');
+            card.innerHTML = `<span class="history-date">📅 ${item.date} (${item.time})</span>${formattedText}`;
+            listContainer.appendChild(card);
         });
-    };
+    }
 
-    const queueRenderPage = num => {
-        if(pageIsRendering) { pageNumPending = num; } else { renderPage(num); }
-    };
-
+    // ==================== পিডিএফ রিডার ====================
+    function filterPdfs(type) { currentFilter = type; document.getElementById('btnAllPdf').classList.toggle('active', type === 'all'); document.getElementById('btnFavPdf').classList.toggle('active', type === 'fav'); loadPdfList(); }
+    function toggleFavorite(event, index) { event.stopPropagation(); const favIndex = favoritePdfs.indexOf(index); if(favIndex > -1) { favoritePdfs.splice(favIndex, 1); } else { favoritePdfs.push(index); } localStorage.setItem('user_favorite_pdfs', JSON.stringify(favoritePdfs)); loadPdfList(); }
+    function loadPdfList() { const container = document.getElementById('pdfListView'); if(!container) return; container.innerHTML = ''; let hasPdfs = false; appDataFromStorage.pdfs.forEach((pdf, idx) => { const isFav = favoritePdfs.includes(idx); if(currentFilter === 'fav' && !isFav) return; hasPdfs = true; const card = document.createElement('div'); card.className = 'pdf-card'; card.onclick = () => openPdfReader(idx); const favIcon = isFav ? '❤️' : '🤍'; const favClass = isFav ? 'fav-btn active' : 'fav-btn'; card.innerHTML = `<button class="${favClass}" onclick="toggleFavorite(event, ${idx})">${favIcon}</button><img src="${escapeHtml(pdf.thumb)}" class="pdf-thumb" onerror="this.src='https://via.placeholder.com/150?text=PDF'"><div class="pdf-info"><div class="pdf-title">${escapeHtml(pdf.title)}</div></div>`; container.appendChild(card); }); if(!hasPdfs) container.innerHTML = `<p style="color: gray; grid-column: span 2; text-align: center;">${currentFilter === 'fav' ? 'কোনো প্রিয় পিডিএফ নেই।' : 'কোনো পিডিএফ নেই।'}</p>`; }
+    
+    const renderPage = num => { pageIsRendering = true; pdfDoc.getPage(num).then(page => { const viewport = page.getViewport({ scale }); canvas.height = viewport.height; canvas.width = viewport.width; const renderCtx = { canvasContext: ctx, viewport: viewport }; page.render(renderCtx).promise.then(() => { pageIsRendering = false; if(pageNumPending !== null) { renderPage(pageNumPending); pageNumPending = null; } }); document.getElementById('page_num').textContent = num; }); };
+    const queueRenderPage = num => { if(pageIsRendering) { pageNumPending = num; } else { renderPage(num); } };
     const onPrevPage = () => { if(pageNum <= 1) return; pageNum--; queueRenderPage(pageNum); };
     const onNextPage = () => { if(pageNum >= pdfDoc.numPages) return; pageNum++; queueRenderPage(pageNum); };
 
     function openPdfReader(index) {
         currentPdfIndex = index;
+        markTrack('pdf'); // ট্র্যাকিং অন
         const pdf = appDataFromStorage.pdfs[index];
+        document.getElementById('pdfReadView').classList.remove('hidden'); document.getElementById('canvasContainer').style.display = 'flex'; document.getElementById('pdfIframeFallback').style.display = 'none'; document.getElementById('pdfFallbackMsg').style.display = 'none';
+        const savedPage = localStorage.getItem('pdf_bookmark_' + index); pageNum = savedPage ? parseInt(savedPage) : 1;
         
-        document.getElementById('pdfReadView').classList.remove('hidden');
-        document.getElementById('canvasContainer').style.display = 'flex';
-        document.getElementById('pdfIframeFallback').style.display = 'none';
-        document.getElementById('pdfFallbackMsg').style.display = 'none';
-        
-        // সংরক্ষিত পেজ চেক করা
-        const savedPage = localStorage.getItem('pdf_bookmark_' + index);
-        pageNum = savedPage ? parseInt(savedPage) : 1;
-        
-        // PDF লোড করা
         pdfjsLib.getDocument(pdf.url).promise.then(docDoc_ => {
-            pdfDoc = docDoc_;
-            document.getElementById('page_count').textContent = pdfDoc.numPages;
-            if(pageNum > pdfDoc.numPages) pageNum = 1;
-            renderPage(pageNum);
+            pdfDoc = docDoc_; document.getElementById('page_count').textContent = pdfDoc.numPages; if(pageNum > pdfDoc.numPages) pageNum = 1; renderPage(pageNum);
         }).catch(err => {
-            // যদি লিংকে সমস্যা থাকে বা CORS ব্লক করে, তবে Google Docs ভিউয়ারে ওপেন হবে (Fallback)
-            document.getElementById('canvasContainer').style.display = 'none';
-            document.getElementById('pdfIframeFallback').style.display = 'block';
-            document.getElementById('pdfFallbackMsg').style.display = 'block';
-            document.getElementById('pdfIframeFallback').src = `https://docs.google.com/viewer?url=${encodeURIComponent(pdf.url)}&embedded=true`;
+            document.getElementById('canvasContainer').style.display = 'none'; document.getElementById('pdfIframeFallback').style.display = 'block'; document.getElementById('pdfFallbackMsg').style.display = 'block'; document.getElementById('pdfIframeFallback').src = `https://docs.google.com/viewer?url=${encodeURIComponent(pdf.url)}&embedded=true`;
         });
     }
 
-    function saveAutoBookmark() {
-        if(currentPdfIndex === null) return;
-        localStorage.setItem('pdf_bookmark_' + currentPdfIndex, pageNum);
-        
-        const toast = document.getElementById('saveToast');
-        toast.innerHTML = `✅ পেজ ${pageNum} সেভ হয়েছে!`;
-        toast.style.display = 'block';
-        setTimeout(() => toast.style.display = 'none', 2000);
-    }
+    function saveAutoBookmark() { if(currentPdfIndex === null) return; localStorage.setItem('pdf_bookmark_' + currentPdfIndex, pageNum); const toast = document.getElementById('saveToast'); toast.innerHTML = `✅ পেজ ${pageNum} সেভ হয়েছে!`; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 2000); }
+    function closePdf() { document.getElementById('pdfReadView').classList.add('hidden'); document.getElementById('pdfIframeFallback').src = ""; pdfDoc = null; }
 
-    function closePdf() {
-        document.getElementById('pdfReadView').classList.add('hidden');
-        document.getElementById('pdfIframeFallback').src = "";
-        pdfDoc = null;
-    }
-
-
-    // ==================== অন্যান্য মডিউল (কুরআন, হাদিস, গল্প, দোয়া, নামাজ) অপরিবর্তিত ====================
+    // ==================== অন্যান্য (কুরআন, হাদিস, গল্প, দোয়া, নামাজ) ====================
     let currentQuranTopicIndex = null; let currentQuranVerseIndex = null;
     function showQuranTopics() { document.getElementById('quranTopicsView').classList.remove('hidden'); document.getElementById('quranVersesView').classList.add('hidden'); document.getElementById('quranDetailView').classList.add('hidden'); }
     function showQuranVerses() { document.getElementById('quranTopicsView').classList.add('hidden'); document.getElementById('quranVersesView').classList.remove('hidden'); document.getElementById('quranDetailView').classList.add('hidden'); }
     function showQuranDetail() { document.getElementById('quranTopicsView').classList.add('hidden'); document.getElementById('quranVersesView').classList.add('hidden'); document.getElementById('quranDetailView').classList.remove('hidden'); }
-    function loadQuranTopics() { const container = document.getElementById('quranTopicsList'); if(!container) return; container.innerHTML = ''; if(!appDataFromStorage.quran || appDataFromStorage.quran.length === 0) return; appDataFromStorage.quran.forEach((topic, idx) => { const card = document.createElement('div'); card.className = 'category-card'; card.innerHTML = `<div style="font-size: 18px;">📖 ${escapeHtml(topic.topic)}</div><small style="color: gray;">${topic.verses ? topic.verses.length : 0} টি আয়াত</small>`; card.onclick = () => loadQuranVerses(idx); container.appendChild(card); }); }
-    function loadQuranVerses(topicIndex) { currentQuranTopicIndex = topicIndex; const topic = appDataFromStorage.quran[topicIndex]; document.getElementById('quranTopicTitle').innerHTML = `📖 ${escapeHtml(topic.topic)}`; const container = document.getElementById('quranVersesList'); container.innerHTML = ''; if(!topic.verses) return; topic.verses.forEach((verse, idx) => { const div = document.createElement('div'); div.className = 'verse-item'; div.innerHTML = `<div class="verse-title">আয়াত ${idx + 1}</div><div class="verse-preview">${escapeHtml(verse.meaning.substring(0, 100))}...</div>`; div.onclick = () => showQuranDetailContent(idx); container.appendChild(div); }); showQuranVerses(); }
-    function showQuranDetailContent(verseIndex) { currentQuranVerseIndex = verseIndex; const verse = appDataFromStorage.quran[currentQuranTopicIndex].verses[verseIndex]; document.getElementById('quranDetailArabic').innerHTML = verse.arabic || ''; document.getElementById('quranDetailMeaning').innerHTML = verse.meaning; document.getElementById('quranDetailSource').innerHTML = verse.source ? `- ${verse.source}` : ''; showQuranDetail(); }
+    function loadQuranTopics() { const c = document.getElementById('quranTopicsList'); if(!c) return; c.innerHTML = ''; if(!appDataFromStorage.quran) return; appDataFromStorage.quran.forEach((t, i) => { const card = document.createElement('div'); card.className = 'category-card'; card.innerHTML = `📖 ${escapeHtml(t.topic)}<br><small style="color:gray">${t.verses?t.verses.length:0} আয়াত</small>`; card.onclick = () => loadQuranVerses(i); c.appendChild(card); }); }
+    function loadQuranVerses(idx) { currentQuranTopicIndex = idx; const t = appDataFromStorage.quran[idx]; document.getElementById('quranTopicTitle').innerHTML = `📖 ${escapeHtml(t.topic)}`; const c = document.getElementById('quranVersesList'); c.innerHTML = ''; if(!t.verses) return; t.verses.forEach((v, i) => { const div = document.createElement('div'); div.className = 'verse-item'; div.innerHTML = `<div class="verse-title">আয়াত ${i+1}</div><div class="verse-preview">${escapeHtml(v.meaning.substring(0,80))}...</div>`; div.onclick = () => showQuranDetailContent(i); c.appendChild(div); }); showQuranVerses(); }
+    function showQuranDetailContent(idx) { currentQuranVerseIndex = idx; markTrack('quran'); /* ট্র্যাকিং অন */ const v = appDataFromStorage.quran[currentQuranTopicIndex].verses[idx]; document.getElementById('quranDetailArabic').innerHTML = v.arabic||''; document.getElementById('quranDetailMeaning').innerHTML = v.meaning; document.getElementById('quranDetailSource').innerHTML = v.source?`- ${v.source}`:''; showQuranDetail(); }
 
     let currentHadithTopicIndex = null; let currentHadithItemIndex = null;
     function showHadithTopics() { document.getElementById('hadithTopicsView').classList.remove('hidden'); document.getElementById('hadithItemsView').classList.add('hidden'); document.getElementById('hadithDetailView').classList.add('hidden'); }
     function showHadithItems() { document.getElementById('hadithTopicsView').classList.add('hidden'); document.getElementById('hadithItemsView').classList.remove('hidden'); document.getElementById('hadithDetailView').classList.add('hidden'); }
     function showHadithDetail() { document.getElementById('hadithTopicsView').classList.add('hidden'); document.getElementById('hadithItemsView').classList.add('hidden'); document.getElementById('hadithDetailView').classList.remove('hidden'); }
-    function loadHadithTopics() { const container = document.getElementById('hadithTopicsList'); if(!container) return; container.innerHTML = ''; if(!appDataFromStorage.hadith || appDataFromStorage.hadith.length === 0) return; appDataFromStorage.hadith.forEach((topic, idx) => { const card = document.createElement('div'); card.className = 'category-card'; card.innerHTML = `<div style="font-size: 18px;">📚 ${escapeHtml(topic.topic)}</div><small style="color: gray;">${topic.hadiths ? topic.hadiths.length : 0} টি হাদিস</small>`; card.onclick = () => loadHadithItems(idx); container.appendChild(card); }); }
-    function loadHadithItems(topicIndex) { currentHadithTopicIndex = topicIndex; const topic = appDataFromStorage.hadith[topicIndex]; document.getElementById('hadithTopicTitle').innerHTML = `📚 ${escapeHtml(topic.topic)}`; const container = document.getElementById('hadithItemsList'); container.innerHTML = ''; if(!topic.hadiths) return; topic.hadiths.forEach((item, idx) => { const div = document.createElement('div'); div.className = 'hadith-item'; div.innerHTML = `<div class="hadith-title">হাদিস ${idx + 1}</div><div class="hadith-preview">${escapeHtml(item.meaning.substring(0, 100))}...</div>`; div.onclick = () => showHadithDetailContent(idx); container.appendChild(div); }); showHadithItems(); }
-    function showHadithDetailContent(itemIndex) { currentHadithItemIndex = itemIndex; const item = appDataFromStorage.hadith[currentHadithTopicIndex].hadiths[itemIndex]; document.getElementById('hadithDetailMeaning').innerHTML = item.meaning; document.getElementById('hadithDetailSource').innerHTML = item.source ? `- ${item.source}` : ''; showHadithDetail(); }
+    function loadHadithTopics() { const c = document.getElementById('hadithTopicsList'); if(!c) return; c.innerHTML = ''; if(!appDataFromStorage.hadith) return; appDataFromStorage.hadith.forEach((t, i) => { const card = document.createElement('div'); card.className = 'category-card'; card.innerHTML = `📚 ${escapeHtml(t.topic)}<br><small style="color:gray">${t.hadiths?t.hadiths.length:0} হাদিস</small>`; card.onclick = () => loadHadithItems(i); c.appendChild(card); }); }
+    function loadHadithItems(idx) { currentHadithTopicIndex = idx; const t = appDataFromStorage.hadith[idx]; document.getElementById('hadithTopicTitle').innerHTML = `📚 ${escapeHtml(t.topic)}`; const c = document.getElementById('hadithItemsList'); c.innerHTML = ''; if(!t.hadiths) return; t.hadiths.forEach((v, i) => { const div = document.createElement('div'); div.className = 'hadith-item'; div.innerHTML = `<div class="hadith-title">হাদিস ${i+1}</div><div class="hadith-preview">${escapeHtml(v.meaning.substring(0,80))}...</div>`; div.onclick = () => showHadithDetailContent(i); c.appendChild(div); }); showHadithItems(); }
+    function showHadithDetailContent(idx) { currentHadithItemIndex = idx; markTrack('hadith'); /* ট্র্যাকিং অন */ const v = appDataFromStorage.hadith[currentHadithTopicIndex].hadiths[idx]; document.getElementById('hadithDetailMeaning').innerHTML = v.meaning; document.getElementById('hadithDetailSource').innerHTML = v.source?`- ${v.source}`:''; showHadithDetail(); }
 
     let currentStoryTopicIndex = null; let currentStoryItemIndex = null;
     function showStoryTopics() { document.getElementById('storyTopicsView').classList.remove('hidden'); document.getElementById('storyItemsView').classList.add('hidden'); document.getElementById('storyDetailView').classList.add('hidden'); }
     function showStoryItems() { document.getElementById('storyTopicsView').classList.add('hidden'); document.getElementById('storyItemsView').classList.remove('hidden'); document.getElementById('storyDetailView').classList.add('hidden'); }
     function showStoryDetail() { document.getElementById('storyTopicsView').classList.add('hidden'); document.getElementById('storyItemsView').classList.add('hidden'); document.getElementById('storyDetailView').classList.remove('hidden'); }
-    function loadStoryTopics() { const container = document.getElementById('storyTopicsList'); if(!container) return; container.innerHTML = ''; if(!appDataFromStorage.story || appDataFromStorage.story.length === 0) return; appDataFromStorage.story.forEach((topic, idx) => { const card = document.createElement('div'); card.className = 'category-card'; card.innerHTML = `<div style="font-size: 18px;">📜 ${escapeHtml(topic.topic)}</div><small style="color: gray;">${topic.stories ? topic.stories.length : 0} টি গল্প</small>`; card.onclick = () => loadStoryItems(idx); container.appendChild(card); }); }
-    function loadStoryItems(topicIndex) { currentStoryTopicIndex = topicIndex; const topic = appDataFromStorage.story[topicIndex]; document.getElementById('storyTopicTitle').innerHTML = `📜 ${escapeHtml(topic.topic)}`; const container = document.getElementById('storyItemsList'); container.innerHTML = ''; if(!topic.stories) return; topic.stories.forEach((item, idx) => { const div = document.createElement('div'); div.className = 'story-item'; div.innerHTML = `<div class="story-title">গল্প ${idx + 1}</div><div class="story-preview">${escapeHtml(item.meaning.substring(0, 100))}...</div>`; div.onclick = () => showStoryDetailContent(idx); container.appendChild(div); }); showStoryItems(); }
-    function showStoryDetailContent(itemIndex) { currentStoryItemIndex = itemIndex; const item = appDataFromStorage.story[currentStoryTopicIndex].stories[itemIndex]; document.getElementById('storyDetailMeaning').innerHTML = item.meaning; document.getElementById('storyDetailSource').innerHTML = item.source ? `- ${item.source}` : ''; showStoryDetail(); }
+    function loadStoryTopics() { const c = document.getElementById('storyTopicsList'); if(!c) return; c.innerHTML = ''; if(!appDataFromStorage.story) return; appDataFromStorage.story.forEach((t, i) => { const card = document.createElement('div'); card.className = 'category-card'; card.innerHTML = `📜 ${escapeHtml(t.topic)}<br><small style="color:gray">${t.stories?t.stories.length:0} গল্প</small>`; card.onclick = () => loadStoryItems(i); c.appendChild(card); }); }
+    function loadStoryItems(idx) { currentStoryTopicIndex = idx; const t = appDataFromStorage.story[idx]; document.getElementById('storyTopicTitle').innerHTML = `📜 ${escapeHtml(t.topic)}`; const c = document.getElementById('storyItemsList'); c.innerHTML = ''; if(!t.stories) return; t.stories.forEach((v, i) => { const div = document.createElement('div'); div.className = 'story-item'; div.innerHTML = `<div class="story-title">গল্প ${i+1}</div><div class="story-preview">${escapeHtml(v.meaning.substring(0,80))}...</div>`; div.onclick = () => showStoryDetailContent(i); c.appendChild(div); }); showStoryItems(); }
+    function showStoryDetailContent(idx) { currentStoryItemIndex = idx; markTrack('story'); /* ট্র্যাকিং অন */ const v = appDataFromStorage.story[currentStoryTopicIndex].stories[idx]; document.getElementById('storyDetailMeaning').innerHTML = v.meaning; document.getElementById('storyDetailSource').innerHTML = v.source?`- ${v.source}`:''; showStoryDetail(); }
 
     let currentDuaTopicIndex = null; let currentDuaItemIndex = null;
     function showDuaTopics() { document.getElementById('duaTopicsView').classList.remove('hidden'); document.getElementById('duaItemsView').classList.add('hidden'); document.getElementById('duaDetailView').classList.add('hidden'); }
     function showDuaItems() { document.getElementById('duaTopicsView').classList.add('hidden'); document.getElementById('duaItemsView').classList.remove('hidden'); document.getElementById('duaDetailView').classList.add('hidden'); }
     function showDuaDetail() { document.getElementById('duaTopicsView').classList.add('hidden'); document.getElementById('duaItemsView').classList.add('hidden'); document.getElementById('duaDetailView').classList.remove('hidden'); }
-    function loadDuaTopics() { const container = document.getElementById('duaTopicsList'); if(!container) return; container.innerHTML = ''; if(!appDataFromStorage.dua || appDataFromStorage.dua.length === 0) return; appDataFromStorage.dua.forEach((topic, idx) => { const card = document.createElement('div'); card.className = 'category-card'; card.innerHTML = `<div style="font-size: 18px;">🤲 ${escapeHtml(topic.topic)}</div><small style="color: gray;">${topic.duas ? topic.duas.length : 0} টি দোয়া</small>`; card.onclick = () => loadDuaItems(idx); container.appendChild(card); }); }
-    function loadDuaItems(topicIndex) { currentDuaTopicIndex = topicIndex; const topic = appDataFromStorage.dua[topicIndex]; document.getElementById('duaTopicTitle').innerHTML = `🤲 ${escapeHtml(topic.topic)}`; const container = document.getElementById('duaItemsList'); container.innerHTML = ''; if(!topic.duas) return; topic.duas.forEach((item, idx) => { const div = document.createElement('div'); div.className = 'dua-item'; div.innerHTML = `<div class="dua-title">দোয়া ${idx + 1}</div><div class="dua-preview">${escapeHtml(item.meaning.substring(0, 100))}...</div>`; div.onclick = () => showDuaDetailContent(idx); container.appendChild(div); }); showDuaItems(); }
-    function showDuaDetailContent(itemIndex) { currentDuaItemIndex = itemIndex; const item = appDataFromStorage.dua[currentDuaTopicIndex].duas[itemIndex]; document.getElementById('duaDetailArabic').innerHTML = item.arabic || ''; document.getElementById('duaDetailMeaning').innerHTML = item.meaning; document.getElementById('duaDetailSource').innerHTML = item.source ? `- ${item.source}` : ''; showDuaDetail(); }
+    function loadDuaTopics() { const c = document.getElementById('duaTopicsList'); if(!c) return; c.innerHTML = ''; if(!appDataFromStorage.dua) return; appDataFromStorage.dua.forEach((t, i) => { const card = document.createElement('div'); card.className = 'category-card'; card.innerHTML = `🤲 ${escapeHtml(t.topic)}<br><small style="color:gray">${t.duas?t.duas.length:0} দোয়া</small>`; card.onclick = () => loadDuaItems(i); c.appendChild(card); }); }
+    function loadDuaItems(idx) { currentDuaTopicIndex = idx; const t = appDataFromStorage.dua[idx]; document.getElementById('duaTopicTitle').innerHTML = `🤲 ${escapeHtml(t.topic)}`; const c = document.getElementById('duaItemsList'); c.innerHTML = ''; if(!t.duas) return; t.duas.forEach((v, i) => { const div = document.createElement('div'); div.className = 'dua-item'; div.innerHTML = `<div class="dua-title">দোয়া ${i+1}</div><div class="dua-preview">${escapeHtml(v.meaning.substring(0,80))}...</div>`; div.onclick = () => showDuaDetailContent(i); c.appendChild(div); }); showDuaItems(); }
+    function showDuaDetailContent(idx) { currentDuaItemIndex = idx; markTrack('dua'); /* ট্র্যাকিং অন */ const v = appDataFromStorage.dua[currentDuaTopicIndex].duas[idx]; document.getElementById('duaDetailArabic').innerHTML = v.arabic||''; document.getElementById('duaDetailMeaning').innerHTML = v.meaning; document.getElementById('duaDetailSource').innerHTML = v.source?`- ${v.source}`:''; showDuaDetail(); }
 
-    function loadPrayerStatus() { const saved = localStorage.getItem("prayerStatus"); if (saved) return JSON.parse(saved); const defaultStatus = {}; prayers.forEach(p => defaultStatus[p.id] = false); return defaultStatus; }
-    function savePrayerStatus(status) { localStorage.setItem("prayerStatus", JSON.stringify(status)); }
-    function renderPrayerList() { const status = loadPrayerStatus(); let completedCount = 0; const container = document.getElementById("prayerList"); if (!container) return; container.innerHTML = ""; prayers.forEach(prayer => { const isChecked = status[prayer.id]; if (isChecked) completedCount++; const div = document.createElement("div"); div.className = "prayer-item" + (isChecked ? " prayer-completed" : ""); div.innerHTML = `<div class="prayer-name"><span>${prayer.icon}</span>${prayer.name}</div><input type="checkbox" class="prayer-checkbox" ${isChecked ? "checked" : ""} onchange="togglePrayer('${prayer.id}')">`; container.appendChild(div); }); const statsEl = document.getElementById("prayerStats"); if (statsEl) statsEl.innerHTML = `📊 আজ পড়েছেন: ${completedCount}/${prayers.length}`; }
-    function togglePrayer(prayerId) { const status = loadPrayerStatus(); status[prayerId] = !status[prayerId]; savePrayerStatus(status); renderPrayerList(); }
-    function resetPrayers() { if (confirm("সব নামাজের স্ট্যাটাস রিসেট করতে চান?")) { const resetStatus = {}; prayers.forEach(p => resetStatus[p.id] = false); savePrayerStatus(resetStatus); renderPrayerList(); } }
+    function loadPrayerStatus() { const saved = localStorage.getItem("prayerStatus"); if (saved) return JSON.parse(saved); const ds = {}; prayers.forEach(p => ds[p.id] = false); return ds; }
+    function savePrayerStatus(s) { localStorage.setItem("prayerStatus", JSON.stringify(s)); }
+    function renderPrayerList() { const s = loadPrayerStatus(); let c = 0; const list = document.getElementById("prayerList"); if (!list) return; list.innerHTML = ""; prayers.forEach(p => { const isChecked = s[p.id]; if (isChecked) c++; const div = document.createElement("div"); div.className = "prayer-item" + (isChecked ? " prayer-completed" : ""); div.innerHTML = `<div class="prayer-name"><span>${p.icon}</span>${p.name}</div><input type="checkbox" class="prayer-checkbox" ${isChecked ? "checked" : ""} onchange="togglePrayer('${p.id}')">`; list.appendChild(div); }); const stats = document.getElementById("prayerStats"); if (stats) stats.innerHTML = `📊 আজ পড়েছেন: ${c}/${prayers.length}`; }
+    function togglePrayer(id) { const s = loadPrayerStatus(); s[id] = !s[id]; savePrayerStatus(s); renderPrayerList(); }
+    function resetPrayers() { if(confirm("রিসেট করতে চান?")) { const rs = {}; prayers.forEach(p => rs[p.id] = false); savePrayerStatus(rs); renderPrayerList(); } }
 
     function escapeHtml(str) { if(!str) return ''; return String(str).replace(/[&<>]/g, function(m) { if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m; }); }
     
-    window.onload = () => { loadQuranTopics(); loadHadithTopics(); loadStoryTopics(); loadDuaTopics(); loadPdfList(); renderPrayerList(); };
+    // পেজ লোড হলে
+    window.onload = () => {
+        loadTracking(); // ট্র্যাকার ইনিশিয়ালাইজেশন
+        loadQuranTopics(); loadHadithTopics(); loadStoryTopics(); loadDuaTopics(); loadPdfList(); renderPrayerList();
+    };
 </script>
 </body>
 </html>
