@@ -81,9 +81,9 @@ const appData = {
     ],
     "pdfs": [
         {
-            "title": "gf",
-            "thumb": "",
-            "url": "PDF/তাকলীদ বিভ্রান্তির নিরসন-ব্রাদার্স রাহুল হোসেন (1).pdf"
+            "title": "আদর্শ পরিবার",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%86%E0%A6%A6%E0%A6%B0%E0%A7%8D%E0%A6%B6%20%E0%A6%AA%E0%A6%B0%E0%A6%BF%E0%A6%AC%E0%A6%BE%E0%A6%B0%20%5Bboimate.com%5D.JPG",
+            "url": "https://github.dev/life-by/ramadan2009/blob/main/PDF/%E0%A6%86%E0%A6%A6%E0%A6%B0%E0%A7%8D%E0%A6%B6%20%E0%A6%AA%E0%A6%B0%E0%A6%BF%E0%A6%AC%E0%A6%BE%E0%A6%B0%20%5Bboimate.com%5D.pdf"
         }
     ]
 };
