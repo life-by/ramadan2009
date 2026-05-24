@@ -84,6 +84,51 @@ const appData = {
             "title": "আদর্শ পরিবার",
             "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%86%E0%A6%A6%E0%A6%B0%E0%A7%8D%E0%A6%B6%20%E0%A6%AA%E0%A6%B0%E0%A6%BF%E0%A6%AC%E0%A6%BE%E0%A6%B0%20%5Bboimate.com%5D.JPG",
             "url": "PDF/আদর্শ পরিবার [boimate.com].pdf"
+        },
+        {
+            "title": "ইজ মিউজিক হালাল",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%87%E0%A6%9C%20%E0%A6%AE%E0%A6%BF%E0%A6%89%E0%A6%9C%E0%A6%BF%E0%A6%95%20%E0%A6%B9%E0%A6%BE%E0%A6%B2%E0%A6%BE%E0%A6%B2.JPG",
+            "url": "PDF/ইজ মিউজিক হালাল [boimate.com].pdf"
+        },
+        {
+            "title": "কবীরা গুনাহ –ইমাম আযযাহাবী",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%95%E0%A6%AC%E0%A7%80%E0%A6%B0%E0%A6%BE%20%E0%A6%97%E0%A7%81%E0%A6%A8%E0%A6%BE%E0%A6%B9%20%E2%80%93%E0%A6%87%E0%A6%AE%E0%A6%BE%E0%A6%AE%20%E0%A6%86%E0%A6%AF%E0%A6%AF%E0%A6%BE%E0%A6%B9%E0%A6%BE%E0%A6%AC%E0%A7%80.JPG",
+            "url": "PDF/কবীরা গুনাহ –ইমাম আযযাহাবী [boimate.com].pdf"
+        },
+        {
+            "title": "কারেন্ট অ্যাফেয়ার্স এপ্রিল ২০২৬",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%95%E0%A6%BE%E0%A6%B0%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F%20%E0%A6%85%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%AB%E0%A7%87%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%B0%E0%A7%8D%E0%A6%B8%20%E0%A6%8F%E0%A6%AA%E0%A7%8D%E0%A6%B0%E0%A6%BF%E0%A6%B2%20%E0%A7%A8%E0%A7%A6%E0%A7%A8%E0%A7%AC%20%5Bboimate.com%5D.JPG",
+            "url": "PDF/কারেন্ট অ্যাফেয়ার্স এপ্রিল ২০২৬ [boimate.com].pdf"
+        },
+        {
+            "title": "কারেন্ট_অ্যাফেয়ার্স_ফেব্রুয়ারি_২০২৬",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%95%E0%A6%BE%E0%A6%B0%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%85%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%AB%E0%A7%87%E0%A7%9F%E0%A6%BE%E0%A6%B0%E0%A7%8D%E0%A6%B8_%E0%A6%AB%E0%A7%87%E0%A6%AC%E0%A7%8D%E0%A6%B0%E0%A7%81%E0%A7%9F%E0%A6%BE%E0%A6%B0%E0%A6%BF_%E0%A7%A8%E0%A7%A6%E0%A7%A8%E0%A7%AC%20%5Bboimate.com%5D.JPG",
+            "url": "PDF/কারেন্ট_অ্যাফেয়ার্স_ফেব্রুয়ারি_২০২৬ [boimate.com].pdf"
+        },
+        {
+            "title": "কারেন্ট_অ্যাফেয়ার্স_ফেব্রুয়ারি_২০২৬",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%95%E0%A6%BE%E0%A6%B0%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F_%E0%A6%85%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%AB%E0%A7%87%E0%A7%9F%E0%A6%BE%E0%A6%B0%E0%A7%8D%E0%A6%B8_%E0%A6%AE%E0%A6%BE%E0%A6%B0%E0%A7%8D%E0%A6%9A_%E0%A7%A8%E0%A7%A6%E0%A7%A8%E0%A7%AC%20%5Bboimate.com%5D.JPG",
+            "url": "PDF/কারেন্ট_অ্যাফেয়ার্স_মার্চ_২০২৬ [boimate.com].pdf"
+        },
+        {
+            "title": "কুরআন_হাদীসের_আলোকে_মহিলাদের_পর্দা",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%95%E0%A7%81%E0%A6%B0%E0%A6%86%E0%A6%A8_%E0%A6%B9%E0%A6%BE%E0%A6%A6%E0%A7%80%E0%A6%B8%E0%A7%87%E0%A6%B0_%E0%A6%86%E0%A6%B2%E0%A7%8B%E0%A6%95%E0%A7%87_%E0%A6%AE%E0%A6%B9%E0%A6%BF%E0%A6%B2%E0%A6%BE%E0%A6%A6%E0%A7%87%E0%A6%B0_%E0%A6%AA%E0%A6%B0%E0%A7%8D%E0%A6%A6%E0%A6%BE%20%5Bboimate.com%5D.JPG",
+            "url": "PDF/কুরআন_হাদীসের_আলোকে_মহিলাদের_পর্দা [boimate.com].pdf"
+        },
+        {
+            "title": "কুরবানি_ও_আকিকা",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%95%E0%A7%81%E0%A6%B0%E0%A6%AC%E0%A6%BE%E0%A6%A8%E0%A6%BF_%E0%A6%93_%E0%A6%86%E0%A6%95%E0%A6%BF%E0%A6%95%E0%A6%BE.JPG",
+            "url": "PDF/কুরবানি_ও_আকিকা [boimate.com].pdf"
+        },
+        {
+            "title": "কোরআন-হাদীসের আলোকে বছরব্যাপী করণীয় ও বর্জনীয়",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%95%E0%A7%8B%E0%A6%B0%E0%A6%86%E0%A6%A8-%E0%A6%B9%E0%A6%BE%E0%A6%A6%E0%A7%80%E0%A6%B8%E0%A7%87%E0%A6%B0%20%E0%A6%86%E0%A6%B2%E0%A7%8B%E0%A6%95%E0%A7%87%20%E0%A6%AC%E0%A6%9B%E0%A6%B0%E0%A6%AC%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%AA%E0%A7%80%20%E0%A6%95%E0%A6%B0%E0%A6%A3%E0%A7%80%E0%A7%9F%20%E0%A6%93%20%E0%A6%AC%E0%A6%B0%E0%A7%8D%E0%A6%9C%E0%A6%A8%E0%A7%80%E0%A7%9F.JPG",
+            "url": "PDF/কোরআন-হাদীসের আলোকে বছরব্যাপী করণীয় ও বর্জনীয় [boimate.com].pdf"
+        },
+        {
+            "title": "নারী_স্বাধীনতার_স্বরূপ_ড_ইয়াদ_কুনাইবী",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%A8%E0%A6%BE%E0%A6%B0%E0%A7%80_%E0%A6%B8%E0%A7%8D%E0%A6%AC%E0%A6%BE%E0%A6%A7%E0%A7%80%E0%A6%A8%E0%A6%A4%E0%A6%BE%E0%A6%B0_%E0%A6%B8%E0%A7%8D%E0%A6%AC%E0%A6%B0%E0%A7%82%E0%A6%AA_%E0%A6%A1_%E0%A6%87%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%A6_%E0%A6%95%E0%A7%81%E0%A6%A8%E0%A6%BE%E0%A6%87%E0%A6%AC%E0%A7%80.JPG",
+            "url": "PDF/নারী_স্বাধীনতার_স্বরূপ_ড_ইয়াদ_কুনাইবী_[boimate.com].pdf"
         }
     ],
     "telegram": {
