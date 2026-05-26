@@ -129,6 +129,41 @@ const appData = {
             "title": "নারী_স্বাধীনতার_স্বরূপ_ড_ইয়াদ_কুনাইবী",
             "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%A8%E0%A6%BE%E0%A6%B0%E0%A7%80_%E0%A6%B8%E0%A7%8D%E0%A6%AC%E0%A6%BE%E0%A6%A7%E0%A7%80%E0%A6%A8%E0%A6%A4%E0%A6%BE%E0%A6%B0_%E0%A6%B8%E0%A7%8D%E0%A6%AC%E0%A6%B0%E0%A7%82%E0%A6%AA_%E0%A6%A1_%E0%A6%87%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%A6_%E0%A6%95%E0%A7%81%E0%A6%A8%E0%A6%BE%E0%A6%87%E0%A6%AC%E0%A7%80.JPG",
             "url": "PDF/নারী_স্বাধীনতার_স্বরূপ_ড_ইয়াদ_কুনাইবী_[boimate.com].pdf"
+        },
+        {
+            "title": "নফছ_ও_শয়তানের_সাথে_মোকাবেলা",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%A8%E0%A6%AB%E0%A6%9B_%E0%A6%93_%E0%A6%B6%E0%A7%9F%E0%A6%A4%E0%A6%BE%E0%A6%A8%E0%A7%87%E0%A6%B0_%E0%A6%B8%E0%A6%BE%E0%A6%A5%E0%A7%87_%E0%A6%AE%E0%A7%8B%E0%A6%95%E0%A6%BE%E0%A6%AC%E0%A7%87%E0%A6%B2%E0%A6%BE.png",
+            "url": "PDF/নফছ_ও_শয়তানের_সাথে_মোকাবেলা [boimate.com].pdf"
+        },
+        {
+            "title": "পাপিষ্ঠা_ছয়_নারী",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%AA%E0%A6%BE%E0%A6%AA%E0%A6%BF%E0%A6%B7%E0%A7%8D%E0%A6%A0%E0%A6%BE_%E0%A6%9B%E0%A7%9F_%E0%A6%A8%E0%A6%BE%E0%A6%B0%E0%A7%80.JPG",
+            "url": "PDF/পাপিষ্ঠা_ছয়_নারী [boimate.com].pdf"
+        },
+        {
+            "title": "প্যারাডক্সিকাল সাজিদ ১",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%AA%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%B0%E0%A6%BE%E0%A6%A1%E0%A6%95%E0%A7%8D%E0%A6%B8%E0%A6%BF%E0%A6%95%E0%A6%BE%E0%A6%B2%20%E0%A6%B8%E0%A6%BE%E0%A6%9C%E0%A6%BF%E0%A6%A6%20%E0%A7%A7.png",
+            "url": "PDF/প্যারাডক্সিকাল সাজিদ ১ [boimate.com].pdf"
+        },
+        {
+            "title": "প্যারাডক্সিকাল সাজিদ 2",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%AA%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%B0%E0%A6%BE%E0%A6%A1%E0%A6%95%E0%A7%8D%E0%A6%B8%E0%A6%BF%E0%A6%95%E0%A6%BE%E0%A6%B2%20%E0%A6%B8%E0%A6%BE%E0%A6%9C%E0%A6%BF%E0%A6%A6%20%E0%A7%A7.png",
+            "url": "PDF/প্যারাডক্সিকাল সাজিদ ২ [boimate.com].pdf"
+        },
+        {
+            "title": "ফিমেল মাইন্ড",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%AB%E0%A6%BF%E0%A6%AE%E0%A7%87%E0%A6%B2%20%E0%A6%AE%E0%A6%BE%E0%A6%87%E0%A6%A8%E0%A7%8D%E0%A6%A1.JPG",
+            "url": "PDF/ফিমেল মাইন্ড Short PDF [boimate.com].pdf"
+        },
+        {
+            "title": "লা_মাযহাবীদের_গোমর_ফাঁস",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%B2%E0%A6%BE_%E0%A6%AE%E0%A6%BE%E0%A6%AF%E0%A6%B9%E0%A6%BE%E0%A6%AC%E0%A7%80%E0%A6%A6%E0%A7%87%E0%A6%B0_%E0%A6%97%E0%A7%8B%E0%A6%AE%E0%A6%B0_%E0%A6%AB%E0%A6%BE%E0%A6%81%E0%A6%B8.png",
+            "url": "PDF/লা_মাযহাবীদের_গোমর_ফাঁস_ [boimate.com].pdf"
+        },
+        {
+            "title": "স্বামীর_হক_স্ত্রীর_অধিকার",
+            "thumb": "https://raw.githubusercontent.com/life-by/ramadan2009/refs/heads/main/PDF/%E0%A6%B8%E0%A7%8D%E0%A6%AC%E0%A6%BE%E0%A6%AE%E0%A7%80%E0%A6%B0_%E0%A6%B9%E0%A6%95_%E0%A6%B8%E0%A7%8D%E0%A6%A4%E0%A7%8D%E0%A6%B0%E0%A7%80%E0%A6%B0_%E0%A6%85%E0%A6%A7%E0%A6%BF%E0%A6%95%E0%A6%BE%E0%A6%B0.JPG",
+            "url": "PDF/স্বামীর_হক_স্ত্রীর_অধিকার [boimate.com].pdf"
         }
     ],
     "telegram": {
