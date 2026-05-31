@@ -7,60 +7,86 @@
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
-        :root { --primary: #059669; --bg-color: #f0fdf4; --card-bg: #ffffff; --text-main: #1f2937; }
+        :root { --primary: #059669; --bg-color: #f0fdf4; --card-bg: #ffffff; --text-main: #1f2937; --border-col: #ddd; --header-bg: #059669; }
+        
+        /* 🌙 Dark Mode Variables */
+        body.dark-mode { --primary: #10b981; --bg-color: #111827; --card-bg: #1f2937; --text-main: #f3f4f6; --border-col: #374151; --header-bg: #064e3b; }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Hind Siliguri', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; transition: background 0.3s; }
         .app-container { width: 100%; max-width: 500px; background: var(--bg-color); min-height: 100vh; box-shadow: 0 0 15px rgba(0,0,0,0.1); position: relative; overflow-x: hidden;}
-        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 0 0 15px 15px; }
+        header { background: var(--header-bg); color: white; padding: 20px; text-align: center; border-radius: 0 0 15px 15px; position: relative; }
+        
+        /* Dark Mode Button */
+        .dark-mode-btn { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.2); border: none; border-radius: 50%; width: 35px; height: 35px; font-size: 18px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        
         .nav-tabs { display: flex; gap: 5px; padding: 15px; justify-content: center; flex-wrap: wrap; }
-        .tab-btn { background: var(--card-bg); border: 1px solid #ddd; padding: 6px; border-radius: 8px; cursor: pointer; flex: 1; text-align: center; font-weight: bold; min-width: 65px; font-size:14px; }
-        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-btn { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-col); padding: 6px; border-radius: 8px; cursor: pointer; flex: 1; text-align: center; font-weight: bold; min-width: 65px; font-size:14px; }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
         .content-area { padding: 15px; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
+        /* 🔍 Search Bar */
+        .search-container { padding: 0 15px; margin-bottom: 15px; }
+        .search-input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-col); font-size: 15px; outline: none; background: var(--card-bg); color: var(--text-main); transition: border 0.3s; }
+        .search-input:focus { border-color: var(--primary); }
+
+        /* Filter Tabs (All / Fav) */
+        .filter-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .filter-btn { flex: 1; padding: 8px; border: 1px solid var(--primary); background: transparent; color: var(--primary); border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .filter-btn.active { background: var(--primary); color: white; }
+
         /* Category Cards */
         .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .category-card { background: white; padding: 15px; border-radius: 10px; border: 1px solid #ddd; text-align: center; cursor: pointer; font-weight: bold; transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
-        .category-card:hover { transform: scale(1.02); background: #f9fafb; border-color: var(--primary); }
+        .category-card { background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid var(--border-col); text-align: center; cursor: pointer; font-weight: bold; transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
+        .category-card:hover { transform: scale(1.02); border-color: var(--primary); }
         
-        .btn-back { background: #e5e7eb; color: #374151; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap:5px;}
-        .btn-back:hover { background: #d1d5db; }
+        .btn-back { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-col); padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap:5px;}
         
-        /* List Items */
-        .list-item { background: white; padding: 15px; border-radius: 10px; margin-bottom: 12px; cursor: pointer; border-left: 4px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.03); transition: all 0.2s; }
-        .list-item:hover { background: #f0fdf4; }
+        /* List Items & Fav Button */
+        .list-item { background: var(--card-bg); padding: 15px; padding-right: 40px; border-radius: 10px; margin-bottom: 12px; cursor: pointer; border-left: 4px solid var(--primary); border-top: 1px solid var(--border-col); border-right: 1px solid var(--border-col); border-bottom: 1px solid var(--border-col); position: relative; }
         .list-title { font-weight: bold; color: var(--text-main); margin-bottom: 5px; font-size: 15px;}
-        .list-preview { font-size: 13px; color: #6b7280; }
+        .list-preview { font-size: 13px; color: gray; }
+        
+        .fav-btn { position: absolute; top: 15px; right: 10px; background: transparent; border: none; font-size: 18px; cursor: pointer; z-index: 10; padding: 5px; }
+        .fav-btn.active { color: #ef4444; }
 
-        /* Professional Detail View UI (New Design) */
-        .detail-card { background: white; padding: 25px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-top: 10px; border-top: 5px solid var(--primary); }
+        /* Detail View */
+        .detail-card { background: var(--card-bg); padding: 25px 20px; border-radius: 12px; border: 1px solid var(--border-col); margin-top: 10px; border-top: 5px solid var(--primary); }
         .detail-arabic { font-size: 26px; text-align: right; color: var(--primary); margin-bottom: 20px; line-height: 1.6; font-family: 'Amiri', 'Hind Siliguri', serif; }
-        .detail-meaning { font-size: 17px; color: #374151; margin-bottom: 20px; text-align: justify; line-height: 1.7; }
-        .detail-source { font-size: 13px; color: #059669; font-weight: bold; background: #ecfdf5; padding: 6px 12px; border-radius: 6px; display: inline-block; border: 1px solid #a7f3d0; }
+        .detail-meaning { font-size: 17px; margin-bottom: 20px; text-align: justify; line-height: 1.7; }
+        .detail-source { font-size: 13px; color: var(--primary); font-weight: bold; background: rgba(16, 185, 129, 0.1); padding: 6px 12px; border-radius: 6px; display: inline-block; border: 1px solid rgba(16, 185, 129, 0.3); }
 
         /* Dua Toggle Tabs */
-        .sub-tabs { display: flex; gap: 10px; margin-bottom: 15px; background: #e5e7eb; padding: 5px; border-radius: 10px;}
-        .sub-tab-btn { flex: 1; padding: 8px; border: none; background: transparent; color: #4b5563; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .sub-tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .sub-tabs { display: flex; gap: 10px; margin-bottom: 15px; background: var(--border-col); padding: 5px; border-radius: 10px;}
+        .sub-tab-btn { flex: 1; padding: 8px; border: none; background: transparent; color: var(--text-main); border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .sub-tab-btn.active { background: var(--card-bg); color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
         /* QnA Accordion */
-        .qna-card { background: white; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden;}
-        .qna-question { padding: 15px; font-weight: bold; color: var(--primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #f9fafb; border-bottom: 1px solid #eee; }
-        .qna-answer { padding: 15px; display: none; font-size: 15px; line-height: 1.6; color: #374151; }
+        .qna-card { background: var(--card-bg); border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--border-col); position: relative;}
+        .qna-question { padding: 15px; padding-right: 40px; font-weight: bold; color: var(--primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-col); }
+        .qna-answer { padding: 15px; display: none; font-size: 15px; line-height: 1.6; }
         .qna-answer.open { display: block; }
         .qna-src { font-size: 12px; color: gray; margin-top: 10px; display: block; font-style: italic; }
+        .qna-card .fav-btn { top: 12px; right: 10px; }
 
         /* PDF Styles */
         .pdf-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .pdf-card { background: white; border-radius: 10px; overflow: hidden; border: 1px solid #ddd; cursor: pointer; }
-        .pdf-thumb { width: 100%; height: 150px; object-fit: contain !important; border-bottom: 1px solid #eee; padding: 5px; }
+        .pdf-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; border: 1px solid var(--border-col); cursor: pointer; position: relative;}
+        .pdf-thumb { width: 100%; height: 150px; object-fit: contain !important; border-bottom: 1px solid var(--border-col); padding: 5px; background: white;}
         .pdf-info { padding: 10px; text-align: center; font-weight: bold; font-size: 14px; }
+        .pdf-card .fav-btn { top: 5px; right: 5px; background: rgba(255,255,255,0.8); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
         
-        #pdfReadView { background: #f3f4f6; position: absolute; top: 0; left: 0; width: 100%; height: 100vh; z-index: 100; display: flex; flex-direction: column; }
-        .pdf-toolbar { background: #1f2937; color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
+        #pdfReadView { background: #1f2937; position: absolute; top: 0; left: 0; width: 100%; height: 100vh; z-index: 100; display: flex; flex-direction: column; }
+        .pdf-toolbar { background: #111827; color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
         .pdf-toolbar button { background: #374151; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; }
-        .pdf-canvas-container { flex: 1; overflow: auto; background: #525659; display: flex; justify-content: center; padding: 10px; }
+        .pdf-canvas-container { flex: 1; overflow: auto; display: flex; justify-content: center; padding: 10px; }
+        
+        /* Prayer List */
+        .prayer-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--border-col); background: var(--card-bg); }
+        .prayer-name { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .prayer-checkbox { width: 25px; height: 25px; accent-color: var(--primary); }
         
         .hidden { display: none !important; }
     </style>
@@ -68,76 +94,100 @@
 <body>
 
 <div class="app-container">
-    <header><h1 id="headerTitle">ইসলামিক ডায়েরি</h1></header>
+    <header>
+        <h1 id="headerTitle">ইসলামিক ডায়েরি</h1>
+        <button id="darkModeBtn" class="dark-mode-btn" onclick="toggleDarkMode()">🌙</button>
+    </header>
 
     <div class="nav-tabs">
         <div class="tab-btn active" data-tab="quran">📖 কুরআন</div>
         <div class="tab-btn" data-tab="hadith">📚 হাদিস</div>
         <div class="tab-btn" data-tab="story">📜 গল্প</div>
         <div class="tab-btn" data-tab="dua">🤲 দোয়া</div>
-        <div class="tab-btn" data-tab="qna">❓ প্রশ্নোত্তর</div>
+        <div class="tab-btn" data-tab="qna">❓ প্রশ্ন</div>
         <div class="tab-btn" data-tab="pdf">📕 পিডিএফ</div>
         <div class="tab-btn" data-tab="prayer">🕌 নামাজ</div>
+    </div>
+
+    <!-- 🔍 Search Bar (Global) -->
+    <div class="search-container">
+        <input type="text" id="globalSearch" class="search-input" placeholder="🔍 এখানে খুঁজুন..." onkeyup="executeSearch()">
     </div>
 
     <div class="content-area">
         <!-- কুরআন -->
         <div id="quran" class="tab-content active">
-            <div id="quranTopicsView"><div id="quranTopicsList" class="category-grid"></div></div>
-            <div id="quranVersesView" class="hidden">
+            <div id="quranTopicsView">
+                <div class="filter-tabs">
+                    <button class="filter-btn active" id="btnQuranAll" onclick="showFavs('quran', 'all')">সব টপিক</button>
+                    <button class="filter-btn" id="btnQuranFav" onclick="showFavs('quran', 'fav')">প্রিয় ❤️</button>
+                </div>
+                <div id="quranTopicsList" class="category-grid"></div>
+                <div id="quranFavsList" class="hidden"></div>
+            </div>
+            <div id="quranItemsView" class="hidden">
                 <button class="btn-back" onclick="showView('quran', 'topic')">⬅ পিছনে</button><h3 id="quranTopicTitle" style="margin-bottom: 15px; color:var(--primary);"></h3>
-                <div id="quranVersesList"></div>
+                <div id="quranItemsList"></div>
             </div>
             <div id="quranDetailView" class="hidden">
                 <button class="btn-back" onclick="showView('quran', 'list')">⬅ তালিকায় ফিরুন</button>
-                <div class="detail-card">
-                    <div class="detail-arabic" id="quranDetailArabic"></div>
-                    <div class="detail-meaning" id="quranDetailMeaning"></div>
-                    <div class="detail-source" id="quranDetailSource"></div>
-                </div>
+                <div class="detail-card"><div class="detail-arabic" id="quranDetailArabic"></div><div class="detail-meaning" id="quranDetailMeaning"></div><div class="detail-source" id="quranDetailSource"></div></div>
             </div>
         </div>
 
         <!-- হাদিস -->
         <div id="hadith" class="tab-content">
-            <div id="hadithTopicsView"><div id="hadithTopicsList" class="category-grid"></div></div>
+            <div id="hadithTopicsView">
+                <div class="filter-tabs">
+                    <button class="filter-btn active" id="btnHadithAll" onclick="showFavs('hadith', 'all')">সব টপিক</button>
+                    <button class="filter-btn" id="btnHadithFav" onclick="showFavs('hadith', 'fav')">প্রিয় ❤️</button>
+                </div>
+                <div id="hadithTopicsList" class="category-grid"></div>
+                <div id="hadithFavsList" class="hidden"></div>
+            </div>
             <div id="hadithItemsView" class="hidden">
                 <button class="btn-back" onclick="showView('hadith', 'topic')">⬅ পিছনে</button><h3 id="hadithTopicTitle" style="margin-bottom: 15px; color:var(--primary);"></h3>
                 <div id="hadithItemsList"></div>
             </div>
             <div id="hadithDetailView" class="hidden">
                 <button class="btn-back" onclick="showView('hadith', 'list')">⬅ তালিকায় ফিরুন</button>
-                <div class="detail-card">
-                    <div class="detail-meaning" id="hadithDetailMeaning"></div>
-                    <div class="detail-source" id="hadithDetailSource"></div>
-                </div>
+                <div class="detail-card"><div class="detail-meaning" id="hadithDetailMeaning"></div><div class="detail-source" id="hadithDetailSource"></div></div>
             </div>
         </div>
 
         <!-- গল্প -->
         <div id="story" class="tab-content">
-            <div id="storyTopicsView"><div id="storyTopicsList" class="category-grid"></div></div>
+            <div id="storyTopicsView">
+                <div class="filter-tabs">
+                    <button class="filter-btn active" id="btnStoryAll" onclick="showFavs('story', 'all')">সব গল্প</button>
+                    <button class="filter-btn" id="btnStoryFav" onclick="showFavs('story', 'fav')">প্রিয় ❤️</button>
+                </div>
+                <div id="storyTopicsList" class="category-grid"></div>
+                <div id="storyFavsList" class="hidden"></div>
+            </div>
             <div id="storyItemsView" class="hidden">
                 <button class="btn-back" onclick="showView('story', 'topic')">⬅ পিছনে</button><h3 id="storyTopicTitle" style="margin-bottom: 15px; color:var(--primary);"></h3>
                 <div id="storyItemsList"></div>
             </div>
             <div id="storyDetailView" class="hidden">
                 <button class="btn-back" onclick="showView('story', 'list')">⬅ তালিকায় ফিরুন</button>
-                <div class="detail-card">
-                    <div class="detail-meaning" id="storyDetailMeaning"></div>
-                    <div class="detail-source" id="storyDetailSource"></div>
-                </div>
+                <div class="detail-card"><div class="detail-meaning" id="storyDetailMeaning"></div><div class="detail-source" id="storyDetailSource"></div></div>
             </div>
         </div>
 
-        <!-- দোয়া (আপডেটেড সাব-ট্যাব সহ) -->
+        <!-- দোয়া -->
         <div id="dua" class="tab-content">
             <div id="duaTopicsView">
-                <div class="sub-tabs">
+                <div class="filter-tabs">
+                    <button class="filter-btn active" id="btnDuaAll" onclick="showFavs('dua', 'all')">সব দোয়া</button>
+                    <button class="filter-btn" id="btnDuaFav" onclick="showFavs('dua', 'fav')">প্রিয় ❤️</button>
+                </div>
+                <div class="sub-tabs" id="duaSubTabs">
                     <button class="sub-tab-btn active" id="btnTabDaily" onclick="filterDua('daily')">দৈনিক দোয়া</button>
                     <button class="sub-tab-btn" id="btnTabZikr" onclick="filterDua('zikr')">জিকির</button>
                 </div>
                 <div id="duaTopicsList" class="category-grid"></div>
+                <div id="duaFavsList" class="hidden"></div>
             </div>
             <div id="duaItemsView" class="hidden">
                 <button class="btn-back" onclick="showView('dua', 'topic')">⬅ পিছনে</button><h3 id="duaTopicTitle" style="margin-bottom: 15px; color:var(--primary);"></h3>
@@ -145,23 +195,28 @@
             </div>
             <div id="duaDetailView" class="hidden">
                 <button class="btn-back" onclick="showView('dua', 'list')">⬅ তালিকায় ফিরুন</button>
-                <div class="detail-card">
-                    <div class="detail-arabic" id="duaDetailArabic"></div>
-                    <div class="detail-meaning" id="duaDetailMeaning"></div>
-                    <div class="detail-source" id="duaDetailSource"></div>
-                </div>
+                <div class="detail-card"><div class="detail-arabic" id="duaDetailArabic"></div><div class="detail-meaning" id="duaDetailMeaning"></div><div class="detail-source" id="duaDetailSource"></div></div>
             </div>
         </div>
 
-        <!-- প্রশ্ন ও উত্তর (নতুন) -->
+        <!-- প্রশ্ন ও উত্তর -->
         <div id="qna" class="tab-content">
-            <h3 style="color:var(--primary); margin-bottom:15px; text-align:center;">সাধারণ প্রশ্নোত্তর</h3>
+            <div class="filter-tabs">
+                <button class="filter-btn active" id="btnQnaAll" onclick="showFavs('qna', 'all')">সব প্রশ্ন</button>
+                <button class="filter-btn" id="btnQnaFav" onclick="showFavs('qna', 'fav')">প্রিয় ❤️</button>
+            </div>
             <div id="qnaListContainer"></div>
+            <div id="qnaFavsList" class="hidden"></div>
         </div>
 
         <!-- পিডিএফ রিডার -->
         <div id="pdf" class="tab-content">
+            <div class="filter-tabs">
+                <button class="filter-btn active" id="btnPdfAll" onclick="showFavs('pdf', 'all')">সব বই</button>
+                <button class="filter-btn" id="btnPdfFav" onclick="showFavs('pdf', 'fav')">প্রিয় ❤️</button>
+            </div>
             <div id="pdfListView" class="pdf-grid"></div>
+            <div id="pdfFavsList" class="pdf-grid hidden"></div>
         </div>
 
         <div id="pdfReadView" class="hidden">
@@ -175,7 +230,7 @@
 
         <!-- নামাজ -->
         <div id="prayer" class="tab-content">
-            <div id="prayerList" style="background:white; border-radius:10px;"></div>
+            <div id="prayerList" style="border-radius:10px; overflow:hidden; border: 1px solid var(--border-col);"></div>
         </div>
     </div>
 </div>
@@ -183,12 +238,31 @@
 <script src="./data.js"></script>
 <script>
     let appDataFromStorage = { quran: [], hadith: [], story: [], dua: [], qna: [], pdfs: [] };
+    let userFavs = JSON.parse(localStorage.getItem('user_favs_v3')) || { quran: [], hadith: [], story: [], dua: [], qna: [], pdfs: [] };
     let currentDuaFilter = 'daily';
+    let prayers = JSON.parse(localStorage.getItem("admin_prayerSettings")) || [{id: "fajr", name: "ফজর", icon: "🌅"}, {id: "dhuhr", name: "যোহর", icon: "☀️"}, {id: "asr", name: "আসর", icon: "🌤️"}, {id: "maghrib", name: "মাগরিব", icon: "🌙"}, {id: "isha", name: "ইশা", icon: "⭐"}];
 
-    // PDF Variables
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-    let pdfDoc = null, pageNum = 1, pageIsRendering = false, pageNumPending = null;
-    const canvas = document.getElementById('pdfRender'), ctx = canvas.getContext('2d');
+    // --- Dark Mode Logic ---
+    function toggleDarkMode() {
+        const body = document.body;
+        body.classList.toggle('dark-mode');
+        const isDark = body.classList.contains('dark-mode');
+        localStorage.setItem('diary_dark_mode', isDark);
+        document.getElementById('darkModeBtn').innerText = isDark ? '☀️' : '🌙';
+    }
+    if(localStorage.getItem('diary_dark_mode') === 'true') toggleDarkMode();
+
+    // --- Search Logic ---
+    function executeSearch() {
+        let query = document.getElementById('globalSearch').value.toLowerCase();
+        let activeTab = document.querySelector('.tab-content.active');
+        let items = activeTab.querySelectorAll('.category-card, .list-item, .qna-card, .pdf-card');
+        
+        items.forEach(item => {
+            if(item.innerText.toLowerCase().includes(query)) item.style.display = '';
+            else item.style.display = 'none';
+        });
+    }
 
     function loadAppData() {
         if(typeof appData !== 'undefined') appDataFromStorage = { ...appData };
@@ -203,16 +277,18 @@
         document.getElementById(tabId).classList.add('active');
         document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
         
-        if(tabId === 'quran') { showView('quran', 'topic'); loadList('quran'); }
-        if(tabId === 'hadith') { showView('hadith', 'topic'); loadList('hadith'); }
-        if(tabId === 'story') { showView('story', 'topic'); loadList('story'); }
-        if(tabId === 'dua') { showView('dua', 'topic'); filterDua(currentDuaFilter); }
-        if(tabId === 'qna') { renderQna(); }
-        if(tabId === 'pdf') { loadPdfList(); }
+        document.getElementById('globalSearch').value = ''; // Reset search on tab switch
+        
+        if(tabId === 'quran') { showView('quran', 'topic'); showFavs('quran', 'all'); }
+        if(tabId === 'hadith') { showView('hadith', 'topic'); showFavs('hadith', 'all'); }
+        if(tabId === 'story') { showView('story', 'topic'); showFavs('story', 'all'); }
+        if(tabId === 'dua') { showView('dua', 'topic'); showFavs('dua', 'all'); }
+        if(tabId === 'qna') { showFavs('qna', 'all'); }
+        if(tabId === 'pdf') { showFavs('pdf', 'all'); }
+        if(tabId === 'prayer') { renderPrayerList(); }
     }
     document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => openTab(btn.getAttribute('data-tab'))));
 
-    // View Manager (Topics -> List -> Details)
     function showView(category, viewType) {
         document.getElementById(`${category}TopicsView`).classList.add('hidden');
         document.getElementById(`${category}ItemsView`).classList.add('hidden');
@@ -221,52 +297,128 @@
         if(viewType === 'topic') document.getElementById(`${category}TopicsView`).classList.remove('hidden');
         if(viewType === 'list') document.getElementById(`${category}ItemsView`).classList.remove('hidden');
         if(viewType === 'detail') document.getElementById(`${category}DetailView`).classList.remove('hidden');
+        executeSearch();
     }
 
-    // Generic Load List (Quran, Hadith, Story)
+    // --- Favorites Logic ---
+    function toggleFav(e, category, id) {
+        e.stopPropagation();
+        const index = userFavs[category].indexOf(id);
+        const btn = e.currentTarget;
+        
+        if(index > -1) { 
+            userFavs[category].splice(index, 1); 
+            btn.classList.remove('active'); btn.innerText = '🤍';
+        } else { 
+            userFavs[category].push(id); 
+            btn.classList.add('active'); btn.innerText = '❤️';
+        }
+        localStorage.setItem('user_favs_v3', JSON.stringify(userFavs));
+        
+        // Re-render Fav List if we are currently viewing it
+        if(document.getElementById(`btn${capitalize(category)}Fav`).classList.contains('active')) {
+            renderFavsList(category);
+        }
+    }
+
+    function showFavs(category, mode) {
+        document.getElementById(`btn${capitalize(category)}All`).classList.toggle('active', mode === 'all');
+        document.getElementById(`btn${capitalize(category)}Fav`).classList.toggle('active', mode === 'fav');
+        
+        const isPdfOrQna = (category === 'pdf' || category === 'qna');
+        const mainList = isPdfOrQna ? document.getElementById(category === 'pdf' ? 'pdfListView' : 'qnaListContainer') : document.getElementById(`${category}TopicsList`);
+        const favList = document.getElementById(`${category}FavsList`);
+        
+        if (mode === 'all') {
+            mainList.classList.remove('hidden');
+            favList.classList.add('hidden');
+            if(category === 'dua') document.getElementById('duaSubTabs').style.display = 'flex';
+            
+            // Re-render
+            if(isPdfOrQna) {
+                if(category === 'pdf') renderPdfList(mainList, false);
+                if(category === 'qna') renderQnaList(mainList, false);
+            } else {
+                if(category === 'dua') filterDua(currentDuaFilter);
+                else loadList(category);
+            }
+        } else {
+            mainList.classList.add('hidden');
+            favList.classList.remove('hidden');
+            if(category === 'dua') document.getElementById('duaSubTabs').style.display = 'none';
+            renderFavsList(category);
+        }
+        executeSearch();
+    }
+
+    function renderFavsList(category) {
+        const c = document.getElementById(`${category}FavsList`); c.innerHTML = '';
+        const favs = userFavs[category] || [];
+        
+        if (favs.length === 0) {
+            c.innerHTML = '<p style="text-align:center; color:gray; grid-column:span 2;">কোনো প্রিয় আইটেম নেই।</p>';
+            return;
+        }
+
+        if(category === 'pdf') { renderPdfList(c, true); return; }
+        if(category === 'qna') { renderQnaList(c, true); return; }
+
+        favs.forEach(favId => {
+            const [tIdx, iIdx] = favId.split('_').map(Number);
+            const topicObj = appDataFromStorage[category][tIdx];
+            if(!topicObj) return;
+            const v = (topicObj.verses || topicObj.hadiths || topicObj.stories || topicObj.duas)[iIdx];
+            if(!v) return;
+            
+            c.innerHTML += `<div class="list-item" onclick="showDetail('${category}', ${tIdx}, ${iIdx})">
+                <button class="fav-btn active" onclick="toggleFav(event, '${category}', '${favId}')">❤️</button>
+                <div class="list-title">${escapeHtml(topicObj.topic)} - পর্ব ${iIdx+1}</div>
+                <div class="list-preview">${escapeHtml(v.meaning.substring(0,80))}...</div>
+            </div>`;
+        });
+    }
+
+    // --- Loading Main Lists ---
     function loadList(category) {
         const listDiv = document.getElementById(`${category}TopicsList`); listDiv.innerHTML = '';
-        const dataArr = appDataFromStorage[category];
-        if(!dataArr) return;
-        dataArr.forEach((t, i) => {
+        if(!appDataFromStorage[category]) return;
+        appDataFromStorage[category].forEach((t, i) => {
             const count = t.verses ? t.verses.length : (t.hadiths ? t.hadiths.length : t.stories.length);
             listDiv.innerHTML += `<div class="category-card" onclick="loadItems('${category}', ${i})">📁 ${escapeHtml(t.topic)}<br><small style="color:gray">${count} টি</small></div>`;
         });
     }
 
-    // Dua Filter Logic
     function filterDua(type) {
         currentDuaFilter = type;
         document.getElementById('btnTabDaily').classList.toggle('active', type === 'daily');
         document.getElementById('btnTabZikr').classList.toggle('active', type === 'zikr');
-        
         const listDiv = document.getElementById('duaTopicsList'); listDiv.innerHTML = '';
         appDataFromStorage.dua.forEach((t, i) => {
-            const tType = t.type || 'daily'; // fallback
-            if(tType === type) {
+            if((t.type || 'daily') === type) {
                 listDiv.innerHTML += `<div class="category-card" onclick="loadItems('dua', ${i})">🤲 ${escapeHtml(t.topic)}<br><small style="color:gray">${t.duas.length} টি</small></div>`;
             }
         });
     }
 
-    // Load Items List (Inner List)
     function loadItems(category, topicIdx) {
         const topicObj = appDataFromStorage[category][topicIdx];
         document.getElementById(`${category}TopicTitle`).innerText = topicObj.topic;
         const c = document.getElementById(`${category}ItemsList`); c.innerHTML = '';
-        
         let itemsArray = topicObj.verses || topicObj.hadiths || topicObj.stories || topicObj.duas;
         
         itemsArray.forEach((v, i) => {
+            const favId = `${topicIdx}_${i}`;
+            const isFav = userFavs[category].includes(favId);
             c.innerHTML += `<div class="list-item" onclick="showDetail('${category}', ${topicIdx}, ${i})">
+                <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event, '${category}', '${favId}')">${isFav ? '❤️' : '🤍'}</button>
                 <div class="list-title">পর্ব ${i+1}</div>
                 <div class="list-preview">${escapeHtml(v.meaning.substring(0,80))}...</div>
             </div>`;
         });
         showView(category, 'list');
+        document.getElementById('globalSearch').value = '';
     }
 
-    // Show Beautiful Detail View
     function showDetail(category, topicIdx, itemIdx) {
         const topicObj = appDataFromStorage[category][topicIdx];
         const item = (topicObj.verses || topicObj.hadiths || topicObj.stories || topicObj.duas)[itemIdx];
@@ -275,7 +427,6 @@
         if(arabicEl) { arabicEl.innerHTML = item.arabic || ''; arabicEl.style.display = item.arabic ? 'block' : 'none'; }
         
         document.getElementById(`${category}DetailMeaning`).innerHTML = item.meaning;
-        
         const srcEl = document.getElementById(`${category}DetailSource`);
         srcEl.innerHTML = item.source ? `সূত্র: ${item.source}` : '';
         srcEl.style.display = item.source ? 'inline-block' : 'none';
@@ -283,55 +434,49 @@
         showView(category, 'detail');
     }
 
-    // QnA Logic
-    function renderQna() {
-        const container = document.getElementById('qnaListContainer'); container.innerHTML = '';
-        if(!appDataFromStorage.qna || appDataFromStorage.qna.length === 0) {
-            container.innerHTML = '<p style="text-align:center; color:gray;">কোনো প্রশ্ন নেই।</p>'; return;
-        }
+    function renderQnaList(container, onlyFav) {
+        container.innerHTML = '';
         appDataFromStorage.qna.forEach((q, i) => {
+            const isFav = userFavs.qna.includes(i);
+            if(onlyFav && !isFav) return;
             container.innerHTML += `
             <div class="qna-card">
+                <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event, 'qna', ${i})">${isFav ? '❤️' : '🤍'}</button>
                 <div class="qna-question" onclick="toggleQna(${i})">🔹 ${escapeHtml(q.question)} <span>▼</span></div>
-                <div class="qna-answer" id="qna-ans-${i}">
-                    ${escapeHtml(q.answer).replace(/\n/g, '<br>')}
-                    ${q.source ? `<span class="qna-src">[দলিল: ${escapeHtml(q.source)}]</span>` : ''}
-                </div>
+                <div class="qna-answer" id="qna-ans-${i}">${escapeHtml(q.answer).replace(/\n/g, '<br>')} ${q.source ? `<span class="qna-src">[দলিল: ${escapeHtml(q.source)}]</span>` : ''}</div>
             </div>`;
         });
     }
-    function toggleQna(i) {
-        const ans = document.getElementById(`qna-ans-${i}`);
-        ans.classList.toggle('open');
-    }
 
-    // PDF Logic (Fixed scroll & responsive)
-    function loadPdfList() {
-        const c = document.getElementById('pdfListView'); c.innerHTML = '';
+    function toggleQna(i) { document.getElementById(`qna-ans-${i}`).classList.toggle('open'); }
+
+    function renderPdfList(container, onlyFav) {
+        container.innerHTML = '';
         appDataFromStorage.pdfs.forEach((pdf, i) => {
-            c.innerHTML += `<div class="pdf-card" onclick="openPdfReader(${i})">
+            const isFav = userFavs.pdfs.includes(i);
+            if(onlyFav && !isFav) return;
+            container.innerHTML += `<div class="pdf-card" onclick="openPdfReader(${i})">
+                <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event, 'pdfs', ${i})">${isFav ? '❤️' : '🤍'}</button>
                 <img src="${escapeHtml(pdf.thumb)}" class="pdf-thumb" onerror="this.src='https://via.placeholder.com/150'">
                 <div class="pdf-info">${escapeHtml(pdf.title)}</div></div>`;
         });
     }
 
-    // PDF Responsive Scale Logic
+    // --- PDF Logic ---
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    let pdfDoc = null, pageNum = 1, pageIsRendering = false, pageNumPending = null;
+    const canvas = document.getElementById('pdfRender'), ctx = canvas.getContext('2d');
+
     const renderPage = num => {
         pageIsRendering = true;
         pdfDoc.getPage(num).then(page => {
-            let unscaledViewport = page.getViewport({ scale: 1 });
             let containerWidth = document.getElementById('canvasContainer').clientWidth || window.innerWidth;
-            let dynamicScale = (containerWidth - 20) / unscaledViewport.width; // 20px for padding/scrollbar
-            if(dynamicScale > 2) dynamicScale = 2; // Maximum scale limit
-            
+            let dynamicScale = (containerWidth - 20) / page.getViewport({ scale: 1 }).width; 
+            if(dynamicScale > 2) dynamicScale = 2; 
             const viewport = page.getViewport({ scale: dynamicScale });
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-            
-            const renderCtx = { canvasContext: ctx, viewport: viewport };
-            page.render(renderCtx).promise.then(() => {
-                pageIsRendering = false;
-                if(pageNumPending !== null) { renderPage(pageNumPending); pageNumPending = null; }
+            canvas.height = viewport.height; canvas.width = viewport.width;
+            page.render({ canvasContext: ctx, viewport: viewport }).promise.then(() => {
+                pageIsRendering = false; if(pageNumPending !== null) { renderPage(pageNumPending); pageNumPending = null; }
             });
             document.getElementById('page_num').textContent = num;
         });
@@ -344,18 +489,32 @@
     function openPdfReader(index) {
         const pdf = appDataFromStorage.pdfs[index];
         document.getElementById('pdfReadView').classList.remove('hidden');
-        
-        // **FIX: Auto scroll to top when PDF opens**
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
-        
         pdfjsLib.getDocument(pdf.url).promise.then(doc => {
-            pdfDoc = doc; document.getElementById('page_count').textContent = pdfDoc.numPages;
-            pageNum = 1; renderPage(pageNum);
+            pdfDoc = doc; document.getElementById('page_count').textContent = pdfDoc.numPages; pageNum = 1; renderPage(pageNum);
         }).catch(err => alert("পিডিএফ লোড হতে সমস্যা হয়েছে!"));
     }
     function closePdf() { document.getElementById('pdfReadView').classList.add('hidden'); pdfDoc = null; }
 
+    // --- Prayer List ---
+    function renderPrayerList() {
+        const s = JSON.parse(localStorage.getItem("prayerStatus")) || {};
+        const list = document.getElementById("prayerList"); list.innerHTML = "";
+        prayers.forEach(p => {
+            const isChecked = s[p.id] || false;
+            list.innerHTML += `<div class="prayer-item" style="${isChecked ? 'opacity:0.6; text-decoration:line-through;' : ''}">
+                <div class="prayer-name">${p.icon} ${p.name}</div>
+                <input type="checkbox" class="prayer-checkbox" ${isChecked ? "checked" : ""} onchange="togglePrayer('${p.id}')">
+            </div>`;
+        });
+    }
+    function togglePrayer(id) {
+        const s = JSON.parse(localStorage.getItem("prayerStatus")) || {};
+        s[id] = !s[id]; localStorage.setItem("prayerStatus", JSON.stringify(s)); renderPrayerList();
+    }
+
     // Helpers
+    function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
     function escapeHtml(str) { if(!str) return ''; return String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
 
     window.onload = () => { loadAppData(); openTab('quran'); };
