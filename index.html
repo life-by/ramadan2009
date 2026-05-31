@@ -89,6 +89,9 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #pdfProgressText { font-size: 20px; font-weight: bold; }
 
+        /* API Loading Indicator */
+        .api-loading { padding: 20px; text-align: center; color: var(--primary); font-weight: bold; }
+
         /* Prayer List */
         .prayer-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--border-col); background: var(--card-bg); }
         .prayer-name { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
@@ -125,13 +128,13 @@
         <div id="quran" class="tab-content active">
             <div id="quranTopicsView">
                 <div class="filter-tabs">
-                    <button class="filter-btn active" id="btnQuranAll" onclick="showFavs('quran', 'all')">সব টপিক</button>
+                    <button class="filter-btn active" id="btnQuranAll" onclick="showFavs('quran', 'all')">সব সূরা</button>
                     <button class="filter-btn" id="btnQuranFav" onclick="showFavs('quran', 'fav')">প্রিয় ❤️</button>
                 </div>
                 <div id="quranTopicsList" class="category-grid"></div>
                 <div id="quranFavsList" class="hidden"></div>
             </div>
-            <div id="quranItemsView" class="hidden">
+            <div id="quranVersesView" class="hidden">
                 <button class="btn-back" onclick="showView('quran', 'topic')">⬅ পিছনে</button><h3 id="quranTopicTitle" style="margin-bottom: 15px; color:var(--primary);"></h3>
                 <div id="quranItemsList"></div>
             </div>
@@ -254,6 +257,14 @@
     let userFavs = JSON.parse(localStorage.getItem('user_favs_v3')) || { quran: [], hadith: [], story: [], dua: [], qna: [], pdfs: [] };
     let currentDuaFilter = 'daily';
     let prayers = JSON.parse(localStorage.getItem("admin_prayerSettings")) || [{id: "fajr", name: "ফজর", icon: "🌅"}, {id: "dhuhr", name: "যোহর", icon: "☀️"}, {id: "asr", name: "আসর", icon: "🌤️"}, {id: "maghrib", name: "মাগরিব", icon: "🌙"}, {id: "isha", name: "ইশা", icon: "⭐"}];
+    
+    // কুরআন সূরার ১১৪টি নামের বাংলা তালিকা
+    const bengaliSurahNames = [
+        "আল-ফাতিহা", "আল-বাকারাহ", "আলি ইমরান", "আন-নিসা", "আল-মায়িদাহ", "আল-আনআম", "আল-আরাফ", "আল-আনফাল", "আত-তাওবাহ", "ইউনুস", "হুদ", "ইউসুফ", "আর-রাদ", "ইব্রাহিম", "আল-হিজর", "আন-নাহল", "আল-ইসরা", "আল-কাহফ", "মারইয়াম", "ত্বোয়া-হা", "আল-আম্বিয়া", "আল-হাজ্জ", "আল-মু'মিনুন", "আন-নূর", "আল-ফুরকান", "আশ-শুয়ারা", "আন-নামল", "আল-কাসাস", "আল-আনকাবুত", "আর-রূম", "লুকমান", "আস-সাজদাহ", "আল-আহজাব", "সাবা", "ফাত্বির", "ইয়াসীন", "আস-সাফফাত", "সোয়াদ", "আজ-জুমার", "গাফির", "ফুসসিলাত", "আশ-শূরা", "আজ-জুখরুফ", "আদ-দুখান", "আল-জাসিয়াহ", "আল-আহকাফ", "মুহাম্মদ", "আল-ফাতহ", "আল-হুজুরাত", "ক্বাফ", "আয-যারিয়াত", "আত-তূর", "আন-নাজম", "আল-কামার", "আর-রহমান", "আল-ওয়াকিয়াহ", "আল-হাদীদ", "আল-মুজাদালাহ", "আল-হাশর", "আল-মুমতাহানাহ", "আস-সাফ", "আল-জুমুআহ", "আল-মুনাফিকুন", "আত-তাগাবুন", "আত-ত্বালাক", "আত-তাহরীম", "আল-মূলক", "আল-কালাম", "আল-হাক্কাহ", "আল-মাআরিজ", "নূহ", "আল-জীন", "আল-মুযযাম্মিল", "আল-মুদ্দাসসির", "আল-কিয়ামাহ", "আল-ইনসান", "আল-মুরসালাত", "আন-নাবা", "আন-নাযিয়াত", "আবাসা", "আত-তাকবীর", "আল-ইনফিতার", "আল-মুতাফফিফীন", "আল-ইনশিকাক", "আল-বুরুজ", "আত্ব-ত্বারিক", "আল-আলা", "আল-গাশিয়াহ", "আল-ফজর", "আল-বালাদ", "আশ-শামস", "আল-লায়ল", "আদ-দুহা", "আশ-শারহ", "আত্ব-তীন", "আল-আলাক", "আল-কদর", "আল-বাইয়িনাহ", "আয-যালযালাহ", "আল-আদিয়াত", "আল-ক্বারিয়াহ", "আত-তাকাসুর", "আল-আসর", "আল-হামাযাহ", "আল-ফীল", "কুরাইশ", "আল-মাউন", "আল-কাওসার", "আল-কাফিরুন", "আন-নসর", "আল-লাহাব", "আল-ইখলাস", "আল-ফালাক", "আন-নাস"
+    ];
+
+    // --- Dynamic API Fetching for Quran ---
+    let currentFetchedQuranVerses = []; // Holds current loaded surah verses
 
     // --- Shuffle Utility Function ---
     function shuffleArray(array) {
@@ -384,23 +395,42 @@
         if(category === 'qna') { renderQnaList(c, true); return; }
 
         favs.forEach(favId => {
-            const [tIdx, iIdx] = favId.split('_').map(Number);
-            const topicObj = appDataFromStorage[category][tIdx];
-            if(!topicObj) return;
-            const v = (topicObj.verses || topicObj.hadiths || topicObj.stories || topicObj.duas)[iIdx];
-            if(!v) return;
-            
-            c.innerHTML += `<div class="list-item" onclick="showDetail('${category}', ${tIdx}, ${iIdx})">
-                <button class="fav-btn active" onclick="toggleFav(event, '${category}', '${favId}')">❤️</button>
-                <div class="list-title">${escapeHtml(topicObj.topic)} - পর্ব ${iIdx+1}</div>
-                <div class="list-preview">${escapeHtml(v.meaning.substring(0,80))}...</div>
-            </div>`;
+            if (category === 'quran') {
+                // For Quran API favorites (Stored as "surahNo_ayahNo")
+                const [sId, aNo] = favId.split('_').map(Number);
+                c.innerHTML += `<div class="list-item" onclick="showQuranApiDetail(${sId}, ${aNo})">
+                    <button class="fav-btn active" onclick="toggleFav(event, 'quran', '${favId}')">❤️</button>
+                    <div class="list-title">সূরা ${bengaliSurahNames[sId-1]} - আয়াত ${aNo}</div>
+                    <div class="list-preview">প্রিয় আয়াত পড়তে ক্লিক করুন...</div>
+                </div>`;
+            } else {
+                const [tIdx, iIdx] = favId.split('_').map(Number);
+                const topicObj = appDataFromStorage[category][tIdx];
+                if(!topicObj) return;
+                const v = (topicObj.verses || topicObj.hadiths || topicObj.stories || topicObj.duas)[iIdx];
+                if(!v) return;
+                
+                c.innerHTML += `<div class="list-item" onclick="showDetail('${category}', ${tIdx}, ${iIdx})">
+                    <button class="fav-btn active" onclick="toggleFav(event, '${category}', '${favId}')">❤️</button>
+                    <div class="list-title">${escapeHtml(topicObj.topic)} - পর্ব ${iIdx+1}</div>
+                    <div class="list-preview">${escapeHtml(v.meaning.substring(0,80))}...</div>
+                </div>`;
+            }
         });
     }
 
     // --- Loading Main Lists ---
     function loadList(category) {
         const listDiv = document.getElementById(`${category}TopicsList`); listDiv.innerHTML = '';
+        
+        if (category === 'quran') {
+            // ১১৪টি সূরা লোড করবে ক্যানভাস গ্রিডে
+            bengaliSurahNames.forEach((name, i) => {
+                listDiv.innerHTML += `<div class="category-card" onclick="loadQuranApiSurah(${i+1})">📖 ${i+1}. ${name}</div>`;
+            });
+            return;
+        }
+
         if(!appDataFromStorage[category]) return;
         appDataFromStorage[category].forEach((t, i) => {
             const count = t.verses ? t.verses.length : (t.hadiths ? t.hadiths.length : t.stories.length);
@@ -408,6 +438,67 @@
         });
     }
 
+    // --- load Quran Surah dynamically from Saudi Complex API ---
+    function loadQuranApiSurah(surahId) {
+        const c = document.getElementById(`quranItemsList`); 
+        c.innerHTML = '<div class="api-loading">মদিনা সার্ভার থেকে সূরা লোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।</div>';
+        document.getElementById(`quranTopicTitle`).innerText = `সূরা ${bengaliSurahNames[surahId-1]}`;
+        showView('quran', 'list');
+
+        fetch(`https://quranenc.com/api/v2/translation/sura/bengali_zakaria/${surahId}`)
+        .then(res => res.json())
+        .then(data => {
+            c.innerHTML = '';
+            currentFetchedQuranVerses = data.result; // Save temporarily for detail view
+            
+            // আয়াতগুলোর অরিজিনাল সিকুয়েন্স বজায় রাখা হয়েছে (শাফেল হবে না)
+            currentFetchedQuranVerses.forEach((v, i) => {
+                const favId = `${surahId}_${v.aya}`;
+                const isFav = userFavs.quran.includes(favId);
+                c.innerHTML += `<div class="list-item" onclick="showQuranApiDetail(${surahId}, ${v.aya})">
+                    <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event, 'quran', '${favId}')">${isFav ? '❤️' : '🤍'}</button>
+                    <div class="list-title">আয়াত ${v.aya}</div>
+                    <div class="list-preview">${escapeHtml(v.translation.substring(0,80))}...</div>
+                </div>`;
+            });
+        })
+        .catch(err => {
+            c.innerHTML = '<div class="api-loading" style="color:red;">সার্ভার থেকে লোড করতে সমস্যা হয়েছে! ইন্টারনেট কানেকশন চেক করুন।</div>';
+        });
+    }
+
+    function showQuranApiDetail(surahId, ayahNo) {
+        // If coming directly from Favorites, we fetch the surah first if not loaded
+        if (currentFetchedQuranVerses.length === 0 || currentFetchedQuranVerses[0].sura != surahId) {
+            document.getElementById('quranDetailMeaning').innerText = "লোড হচ্ছে...";
+            showView('quran', 'detail');
+            fetch(`https://quranenc.com/api/v2/translation/sura/bengali_zakaria/${surahId}`)
+            .then(res => res.json())
+            .then(data => {
+                currentFetchedQuranVerses = data.result;
+                displayQuranApiDetailContent(ayahNo, surahId);
+            });
+        } else {
+            displayQuranApiDetailContent(ayahNo, surahId);
+        }
+    }
+
+    function displayQuranApiDetailContent(ayahNo, surahId) {
+        const item = currentFetchedQuranVerses.find(v => v.aya == ayahNo);
+        if(!item) return;
+        
+        document.getElementById(`quranDetailArabic`).innerHTML = item.arabic_text || '';
+        document.getElementById(`quranDetailArabic`).style.display = 'block';
+        document.getElementById(`quranDetailMeaning`).innerHTML = item.translation;
+        
+        const srcEl = document.getElementById(`quranDetailSource`);
+        srcEl.innerHTML = `সূরা ${bengaliSurahNames[surahId-1]} | আয়াত: ${ayahNo}`;
+        srcEl.style.display = 'inline-block';
+        
+        showView('quran', 'detail');
+    }
+
+    // --- Loading Custom categories ---
     function filterDua(type) {
         currentDuaFilter = type;
         document.getElementById('btnTabDaily').classList.toggle('active', type === 'daily');
@@ -426,7 +517,6 @@
         const c = document.getElementById(`${category}ItemsList`); c.innerHTML = '';
         let itemsArray = topicObj.verses || topicObj.hadiths || topicObj.stories || topicObj.duas;
         
-        // Shuffle indices for dynamic display
         let indices = Array.from({length: itemsArray.length}, (_, i) => i);
         indices = shuffleArray(indices);
         
@@ -461,10 +551,8 @@
 
     function renderQnaList(container, onlyFav) {
         container.innerHTML = '';
-        
-        // Shuffle QnA array indices
         let indices = Array.from({length: appDataFromStorage.qna.length}, (_, i) => i);
-        if(!onlyFav) indices = shuffleArray(indices); // Don't shuffle favorites view
+        if(!onlyFav) indices = shuffleArray(indices);
 
         indices.forEach((originalIndex) => {
             const q = appDataFromStorage.qna[originalIndex];
@@ -483,8 +571,6 @@
 
     function renderPdfList(container, onlyFav) {
         container.innerHTML = '';
-        
-        // Shuffle PDF array indices
         let indices = Array.from({length: appDataFromStorage.pdfs.length}, (_, i) => i);
         if(!onlyFav) indices = shuffleArray(indices);
 
@@ -507,14 +593,11 @@
     const renderPage = num => {
         pageIsRendering = true;
         pdfDoc.getPage(num).then(page => {
-            let containerWidth = document.getElementById('canvasContainer').clientWidth - 20; // 20px padding
+            let containerWidth = document.getElementById('canvasContainer').clientWidth - 20; 
             let unscaledViewport = page.getViewport({ scale: 1 });
-            
-            // Exact scale to fit width (prevents cut-offs)
             let scale = containerWidth / unscaledViewport.width; 
             let viewport = page.getViewport({ scale: scale });
 
-            // High DPI Rendering (fixes blurry text)
             let outputScale = window.devicePixelRatio || 1;
             canvas.width = Math.floor(viewport.width * outputScale);
             canvas.height = Math.floor(viewport.height * outputScale);
@@ -541,7 +624,6 @@
         document.getElementById('pdfReadView').classList.remove('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
         
-        // Show Loading Overlay
         const overlay = document.getElementById('pdfLoadingOverlay');
         const progressText = document.getElementById('pdfProgressText');
         overlay.style.display = 'flex';
@@ -549,7 +631,6 @@
 
         let loadingTask = pdfjsLib.getDocument(pdf.url);
         
-        // Listen to Download Progress
         loadingTask.onProgress = function(progressData) {
             if (progressData.total > 0) {
                 let percent = Math.round((progressData.loaded / progressData.total) * 100);
@@ -561,11 +642,11 @@
             pdfDoc = doc; 
             document.getElementById('page_count').textContent = pdfDoc.numPages; 
             pageNum = 1; 
-            overlay.style.display = 'none'; // Hide overlay when done
+            overlay.style.display = 'none'; 
             renderPage(pageNum);
         }).catch(err => {
             overlay.style.display = 'none';
-            alert("পিডিএফ লোড হতে সমস্যা হয়েছে! আপনার ইন্টারনেট চেক করুন।");
+            alert("পিডিএফ লোড হতে সমস্যা হয়েছে! ইন্টারনেট কানেকশন চেক করুন।");
         });
     }
     
