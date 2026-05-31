@@ -30,23 +30,30 @@
         .sub-item { padding: 8px; background: white; margin-bottom: 8px; border-radius: 6px; }
         .item-info { flex: 1; }
         .item-title { font-weight: 600; color: #1f2937; }
+        .item-source { font-size: 12px; color: #6b7280; }
         .item-actions { display: flex; gap: 8px; }
         .item-actions button { padding: 5px 12px; font-size: 12px; }
-        .hidden { display: none; }
+        .settings-card { background: #f9fafb; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        .output-box { width: 100%; height: 250px; background: #1f2937; color: #10b981; padding: 15px; font-family: monospace; font-size: 12px; border-radius: 8px; margin-top: 10px; overflow: auto; }
         .status-msg { background: #d1fae5; color: #065f46; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
+        .prayer-item-row { display: flex; gap: 10px; align-items: center; padding: 10px; background: #f9fafb; margin-bottom: 10px; border-radius: 8px; flex-wrap: wrap; }
+        .prayer-item-row input { width: auto; flex: 1; min-width: 100px; }
+        .topic-select { margin-bottom: 15px; padding: 10px; background: #f3f4f6; border-radius: 8px; }
+        .hidden { display: none; }
+        .thumb-preview { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; border: 1px solid #ccc; }
         @media (max-width: 768px) { .sub-item { flex-direction: column; align-items: flex-start; } .item-actions { width: 100%; justify-content: flex-end; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🛠️ অ্যাডমিন প্যানেল</h1>
+    <h1>🛠️ অ্যাডমিন প্যানেল (সম্পূর্ণ কন্ট্রোল)</h1>
     
     <div class="nav-tabs">
         <button class="tab-btn active" data-tab="quranTab">📖 কুরআন</button>
         <button class="tab-btn" data-tab="hadithTab">📚 হাদিস</button>
         <button class="tab-btn" data-tab="storyTab">📜 গল্প</button>
-        <button class="tab-btn" data-tab="duaTab">🤲 দোয়া ও জিকির</button>
+        <button class="tab-btn" data-tab="duaTab">🤲 দোয়া</button>
         <button class="tab-btn" data-tab="qnaTab">❓ প্রশ্ন ও উত্তর</button>
         <button class="tab-btn" data-tab="pdfTab">📕 পিডিএফ</button>
         <button class="tab-btn" data-tab="prayerTab">🕌 নামাজ</button>
@@ -56,20 +63,25 @@
     <!-- কুরআন ট্যাব -->
     <div id="quranTab" class="tab-content active">
         <h2>📖 কুরআন ম্যানেজমেন্ট</h2>
-        <select id="quranTopicSelect"><option value="-1">-- নতুন টপিক তৈরি করুন --</option></select>
-        <button class="btn btn-warning" onclick="showNewQuranTopicForm()">➕ নতুন টপিক</button>
-        <button class="btn btn-danger" onclick="deleteQuranTopic()">🗑️ ডিলিট</button>
+        <div class="topic-select">
+            <label>📌 টপিক সিলেক্ট / এডিট</label>
+            <select id="quranTopicSelect"><option value="-1">-- নতুন টপিক তৈরি করুন --</option></select>
+            <button class="btn btn-warning" onclick="showNewQuranTopicForm()" style="margin-top: 10px;">➕ নতুন টপিক</button>
+            <button class="btn btn-danger" onclick="deleteQuranTopic()" style="margin-top: 10px;">🗑️ ডিলিট</button>
+        </div>
         <div id="quranTopicForm" class="hidden">
-            <input type="text" id="quranTopicName" placeholder="যেমন: ধৈর্য ও সালাত">
-            <button class="btn" onclick="saveQuranTopic()">💾 টপিক সেভ</button>
-            <button class="btn btn-gray" onclick="hideQuranTopicForm()">❌ বাতিল</button>
+            <div class="form-group">
+                <input type="text" id="quranTopicName" placeholder="যেমন: ধৈর্য ও সালাত">
+                <button class="btn" style="margin-top:10px" onclick="saveQuranTopic()">💾 টপিক সেভ করুন</button>
+                <button class="btn btn-gray" onclick="hideQuranTopicForm()">❌ বাতিল</button>
+            </div>
         </div>
         <hr>
         <div id="quranVerseForm" class="hidden">
             <input type="hidden" id="quranVerseEditIndex" value="-1">
-            <label>আরবি টেক্সট</label><textarea id="quranArabic"></textarea>
-            <label>বাংলা অর্থ</label><textarea id="quranMeaning"></textarea>
-            <label>সোর্স</label><input type="text" id="quranSource">
+            <label>আরবি টেক্সট</label><textarea id="quranArabic" placeholder="আরবি টেক্সট"></textarea>
+            <label>বাংলা অর্থ</label><textarea id="quranMeaning" placeholder="বাংলা অর্থ"></textarea>
+            <label>সোর্স</label><input type="text" id="quranSource" placeholder="সোর্স">
             <button class="btn" onclick="saveQuranVerse()">💾 আয়াত সেভ করুন</button>
             <button class="btn btn-gray" onclick="resetQuranVerseForm()">🔄 ক্লিয়ার</button>
         </div>
@@ -79,19 +91,23 @@
     <!-- হাদিস ট্যাব -->
     <div id="hadithTab" class="tab-content">
         <h2>📚 হাদিস ম্যানেজমেন্ট</h2>
-        <select id="hadithTopicSelect"><option value="-1">-- নতুন টপিক তৈরি করুন --</option></select>
-        <button class="btn btn-warning" onclick="showNewHadithTopicForm()">➕ নতুন টপিক</button>
-        <button class="btn btn-danger" onclick="deleteHadithTopic()">🗑️ ডিলিট</button>
+        <div class="topic-select">
+            <select id="hadithTopicSelect"><option value="-1">-- নতুন টপিক তৈরি করুন --</option></select>
+            <button class="btn btn-warning" onclick="showNewHadithTopicForm()" style="margin-top: 10px;">➕ নতুন টপিক</button>
+            <button class="btn btn-danger" onclick="deleteHadithTopic()" style="margin-top: 10px;">🗑️ ডিলিট</button>
+        </div>
         <div id="hadithTopicForm" class="hidden">
-            <input type="text" id="hadithTopicName" placeholder="যেমন: নিয়তের গুরুত্ব">
-            <button class="btn" onclick="saveHadithTopic()">💾 টপিক সেভ</button>
-            <button class="btn btn-gray" onclick="hideHadithTopicForm()">❌ বাতিল</button>
+            <div class="form-group">
+                <input type="text" id="hadithTopicName" placeholder="যেমন: নিয়তের গুরুত্ব">
+                <button class="btn" style="margin-top:10px" onclick="saveHadithTopic()">💾 টপিক সেভ করুন</button>
+                <button class="btn btn-gray" onclick="hideHadithTopicForm()">❌ বাতিল</button>
+            </div>
         </div>
         <hr>
         <div id="hadithItemForm" class="hidden">
             <input type="hidden" id="hadithItemEditIndex" value="-1">
-            <label>বাংলা অর্থ</label><textarea id="hadithMeaning"></textarea>
-            <label>সোর্স</label><input type="text" id="hadithSource">
+            <label>বাংলা অর্থ</label><textarea id="hadithMeaning" placeholder="বাংলা অর্থ"></textarea>
+            <label>সোর্স</label><input type="text" id="hadithSource" placeholder="সোর্স">
             <button class="btn" onclick="saveHadithItem()">💾 হাদিস সেভ করুন</button>
             <button class="btn btn-gray" onclick="resetHadithItemForm()">🔄 ক্লিয়ার</button>
         </div>
@@ -101,63 +117,70 @@
     <!-- গল্প ট্যাব -->
     <div id="storyTab" class="tab-content">
         <h2>📜 গল্প ম্যানেজমেন্ট</h2>
-        <select id="storyTopicSelect"><option value="-1">-- নতুন টপিক তৈরি করুন --</option></select>
-        <button class="btn btn-warning" onclick="showNewStoryTopicForm()">➕ নতুন টপিক</button>
-        <button class="btn btn-danger" onclick="deleteStoryTopic()">🗑️ ডিলিট</button>
+        <div class="topic-select">
+            <select id="storyTopicSelect"><option value="-1">-- নতুন টপিক তৈরি করুন --</option></select>
+            <button class="btn btn-warning" onclick="showNewStoryTopicForm()" style="margin-top: 10px;">➕ নতুন টপিক</button>
+            <button class="btn btn-danger" onclick="deleteStoryTopic()" style="margin-top: 10px;">🗑️ ডিলিট</button>
+        </div>
         <div id="storyTopicForm" class="hidden">
-            <input type="text" id="storyTopicName" placeholder="যেমন: পিপাসার্ত কুকুর">
-            <button class="btn" onclick="saveStoryTopic()">💾 টপিক সেভ</button>
-            <button class="btn btn-gray" onclick="hideStoryTopicForm()">❌ বাতিল</button>
+            <div class="form-group">
+                <input type="text" id="storyTopicName" placeholder="যেমন: পিপাসার্ত কুকুর">
+                <button class="btn" style="margin-top:10px" onclick="saveStoryTopic()">💾 টপিক সেভ করুন</button>
+                <button class="btn btn-gray" onclick="hideStoryTopicForm()">❌ বাতিল</button>
+            </div>
         </div>
         <hr>
         <div id="storyItemForm" class="hidden">
             <input type="hidden" id="storyItemEditIndex" value="-1">
-            <label>গল্পের বিবরণ</label><textarea id="storyMeaning"></textarea>
-            <label>সোর্স</label><input type="text" id="storySource">
+            <label>গল্পের বিবরণ</label><textarea id="storyMeaning" placeholder="গল্প"></textarea>
+            <label>সোর্স</label><input type="text" id="storySource" placeholder="সোর্স">
             <button class="btn" onclick="saveStoryItem()">💾 গল্প সেভ করুন</button>
             <button class="btn btn-gray" onclick="resetStoryItemForm()">🔄 ক্লিয়ার</button>
         </div>
         <div class="item-list" id="storyList"></div>
     </div>
 
-    <!-- দোয়া ট্যাব (আপডেটেড) -->
+    <!-- দোয়া ট্যাব -->
     <div id="duaTab" class="tab-content">
         <h2>🤲 দোয়া ও জিকির ম্যানেজমেন্ট</h2>
-        <select id="duaTopicSelect"><option value="-1">-- নতুন টপিক তৈরি করুন --</option></select>
-        <button class="btn btn-warning" onclick="showNewDuaTopicForm()">➕ নতুন টপিক</button>
-        <button class="btn btn-danger" onclick="deleteDuaTopic()">🗑️ ডিলিট</button>
-        
-        <div id="duaTopicForm" class="hidden" style="background:#f3f4f6; padding:10px; border-radius:8px; margin-top:10px;">
-            <label>ক্যাটাগরি সিলেক্ট করুন:</label>
-            <select id="duaTopicType">
-                <option value="daily">দৈনিক দোয়া</option>
-                <option value="zikr">জিকির</option>
-            </select>
-            <label>টপিকের নাম:</label>
-            <input type="text" id="duaTopicName" placeholder="যেমন: সকালের দোয়া">
-            <button class="btn" onclick="saveDuaTopic()">💾 টপিক সেভ</button>
-            <button class="btn btn-gray" onclick="hideDuaTopicForm()">❌ বাতিল</button>
+        <div class="topic-select">
+            <select id="duaTopicSelect"><option value="-1">-- নতুন টপিক তৈরি করুন --</option></select>
+            <button class="btn btn-warning" onclick="showNewDuaTopicForm()" style="margin-top: 10px;">➕ নতুন টপিক</button>
+            <button class="btn btn-danger" onclick="deleteDuaTopic()" style="margin-top: 10px;">🗑️ ডিলিট</button>
+        </div>
+        <div id="duaTopicForm" class="hidden" style="background:#f3f4f6; padding:15px; border-radius:8px; margin-bottom:15px;">
+            <div class="form-group">
+                <label>ক্যাটাগরি সিলেক্ট করুন:</label>
+                <select id="duaTopicType">
+                    <option value="daily">দৈনিক দোয়া</option>
+                    <option value="zikr">জিকির</option>
+                </select>
+                <label>টপিকের নাম:</label>
+                <input type="text" id="duaTopicName" placeholder="যেমন: সকালের দোয়া">
+                <button class="btn" style="margin-top:10px" onclick="saveDuaTopic()">💾 টপিক সেভ করুন</button>
+                <button class="btn btn-gray" onclick="hideDuaTopicForm()">❌ বাতিল</button>
+            </div>
         </div>
         <hr>
         <div id="duaItemForm" class="hidden">
             <input type="hidden" id="duaItemEditIndex" value="-1">
-            <label>আরবি টেক্সট</label><textarea id="duaArabic"></textarea>
-            <label>বাংলা অর্থ/উচ্চারণ</label><textarea id="duaMeaning"></textarea>
-            <label>সোর্স/ফজিলত</label><input type="text" id="duaSource">
-            <button class="btn" onclick="saveDuaItem()">💾 সেভ করুন</button>
+            <label>আরবি টেক্সট</label><textarea id="duaArabic" placeholder="আরবি"></textarea>
+            <label>বাংলা অর্থ/উচ্চারণ</label><textarea id="duaMeaning" placeholder="বাংলা অর্থ"></textarea>
+            <label>সোর্স/ফজিলত</label><input type="text" id="duaSource" placeholder="সোর্স">
+            <button class="btn" onclick="saveDuaItem()">💾 দোয়া সেভ করুন</button>
             <button class="btn btn-gray" onclick="resetDuaItemForm()">🔄 ক্লিয়ার</button>
         </div>
         <div class="item-list" id="duaList"></div>
     </div>
 
-    <!-- প্রশ্ন ও উত্তর ট্যাব (নতুন) -->
+    <!-- নতুন প্রশ্ন ও উত্তর ট্যাব -->
     <div id="qnaTab" class="tab-content">
         <h2>❓ প্রশ্ন ও উত্তর ম্যানেজমেন্ট</h2>
-        <div id="qnaItemForm">
+        <div id="qnaItemForm" style="margin-bottom: 20px;">
             <input type="hidden" id="qnaItemEditIndex" value="-1">
             <label>প্রশ্ন:</label><input type="text" id="qnaQuestion" placeholder="প্রশ্ন লিখুন...">
             <label>উত্তর:</label><textarea id="qnaAnswer" placeholder="বিস্তারিত উত্তর লিখুন..."></textarea>
-            <label>সোর্স (ঐচ্ছিক):</label><input type="text" id="qnaSource" placeholder="দলিল/সূত্র">
+            <label>সোর্স/দলিল (ঐচ্ছিক):</label><input type="text" id="qnaSource" placeholder="দলিল/সূত্র">
             <button class="btn" onclick="saveQnaItem()">💾 প্রশ্ন-উত্তর সেভ করুন</button>
             <button class="btn btn-gray" onclick="resetQnaForm()">🔄 ক্লিয়ার</button>
         </div>
@@ -169,9 +192,9 @@
         <h2>📕 পিডিএফ রিডার ম্যানেজমেন্ট</h2>
         <div id="pdfItemForm" style="margin-bottom: 20px;">
             <input type="hidden" id="pdfItemEditIndex" value="-1">
-            <label>বই/পিডিএফ এর নাম</label><input type="text" id="pdfTitle">
-            <label>থাম্বনেইল লিংক (URL)</label><input type="text" id="pdfThumb">
-            <label>পিডিএফ লিংক (URL)</label><input type="text" id="pdfUrl">
+            <label>বই/পিডিএফ এর নাম</label><input type="text" id="pdfTitle" placeholder="আল কুরআনুল কারীম">
+            <label>থাম্বনেইল লিংক (URL)</label><input type="text" id="pdfThumb" placeholder="https://image.jpg">
+            <label>পিডিএফ লিংক (URL)</label><input type="text" id="pdfUrl" placeholder="https://book.pdf">
             <button class="btn" onclick="savePdfItem()">💾 পিডিএফ সেভ করুন</button>
             <button class="btn btn-gray" onclick="resetPdfForm()">🔄 ক্লিয়ার</button>
         </div>
@@ -182,145 +205,226 @@
     <div id="prayerTab" class="tab-content">
         <h2>🕌 নামাজের তালিকা কাস্টমাইজ</h2>
         <div id="prayerSettingsList"></div>
-        <button class="btn" onclick="addPrayer()">➕ নতুন নামাজ</button>
+        <button class="btn" onclick="addPrayer()">➕ নতুন নামাজ যোগ করুন</button>
         <button class="btn btn-blue" onclick="savePrayerSettings()">💾 সেভ করুন</button>
+        <div class="status-msg" id="prayerStatusMsg"></div>
     </div>
 
     <!-- গ্লোবাল সেটিংস ট্যাব -->
     <div id="settingsTab" class="tab-content">
         <h2>⚙️ গ্লোবাল সেটিংস</h2>
-        <button class="btn btn-blue" onclick="downloadBackup()">📥 ব্যাকআপ ডাউনলোড</button>
-        <input type="file" id="backupFile" accept=".json" style="width: auto;">
-        <button class="btn btn-warning" onclick="restoreBackup()">🔄 রিস্টোর</button>
-        <br><br>
-        <button class="btn" onclick="downloadDataJs()">📥 data.js ডাউনলোড</button>
-        <button class="btn btn-blue" onclick="generateAndCopyCode()">📋 কোড কপি</button>
-        <div id="outputCode" style="margin-top:10px; background:#111; color:#0f0; padding:10px; max-height:200px; overflow:auto;"></div>
+        <div class="settings-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            <div class="settings-card">
+                <h3>🎨 থিম সেটিংস</h3>
+                <label>প্রাইমারি কালার</label><input type="color" id="primaryColor" value="#059669" style="height:40px; padding:2px;">
+                <label style="margin-top: 10px;">হেডার টেক্সট</label><input type="text" id="headerText" placeholder="ইসলামিক ডায়েরি">
+                <button class="btn" style="margin-top: 15px;" onclick="saveThemeSettings()">ثিম সেভ করুন</button>
+            </div>
+            
+            <div class="settings-card">
+                <h3>✈️ টেলিগ্রাম বট সেটিংস</h3>
+                <label>বট টোকেন (Bot Token)</label>
+                <input type="text" id="tgBotToken" placeholder="123456:ABC-DEF" style="margin-bottom:10px;">
+                <label>চ্যাট আইডি (Chat ID)</label>
+                <input type="text" id="tgChatId" placeholder="123456789">
+                <button class="btn" style="margin-top: 15px;" onclick="saveTelegramSettings()">সেভ করুন</button>
+            </div>
+
+            <div class="settings-card">
+                <h3>💾 ব্যাকআপ ও রিস্টোর</h3>
+                <button class="btn btn-blue" onclick="downloadBackup()">📥 ব্যাকআপ ডাউনলোড</button>
+                <label style="margin-top: 10px;">ব্যাকআপ রিস্টোর</label>
+                <input type="file" id="backupFile" accept=".json">
+                <button class="btn btn-warning" style="margin-top: 10px;" onclick="restoreBackup()">🔄 রিস্টোর করুন</button>
+            </div>
+            <div class="settings-card">
+                <h3>💾 data.js ফাইল</h3>
+                <button class="btn" onclick="downloadDataJs()">📥 data.js ডাউনলোড</button>
+                <button class="btn btn-blue" onclick="generateAndCopyCode()">📋 কোড কপি</button>
+            </div>
+        </div>
+        <div class="output-box" id="outputCode"></div>
+        <div class="status-msg" id="globalStatusMsg"></div>
     </div>
 </div>
 
 <script src="./data.js"></script>
 <script>
-    let editingData = { quran: [], hadith: [], story: [], dua: [], qna: [], pdfs: [], telegram: {} };
-    let prayerSettings = JSON.parse(localStorage.getItem("admin_prayerSettings")) || [{id: "fajr", name: "ফজর", icon: "🌅"}];
+    let editingData = { quran: [], hadith: [], story: [], dua: [], qna: [], pdfs: [], telegram: { token: '', chatId: '' } };
     let currentQuranTopicIndex = -1, currentHadithTopicIndex = -1, currentStoryTopicIndex = -1, currentDuaTopicIndex = -1;
-
+    let prayerSettings = JSON.parse(localStorage.getItem("admin_prayerSettings")) || [
+        { id: "fajr", name: "ফজর", icon: "🌅" }, { id: "dhuhr", name: "যোহর", icon: "☀️" }, { id: "asr", name: "আসর", icon: "🌤️" },
+        { id: "maghrib", name: "মাগরিব", icon: "🌙" }, { id: "isha", name: "ইশা", icon: "⭐" }
+    ];
+    
+    // --- 📥 গিটহাব data.js এবং লোকাল স্টোরেজ থেকে সরাসরি ডাটা মার্জ করা ---
     function loadDataFromStorage() {
         if(typeof appData !== 'undefined') {
-            editingData = { ...appData };
-            if(!editingData.qna) editingData.qna = [];
+            editingData = {
+                quran: appData.quran || [], 
+                hadith: appData.hadith || [], 
+                story: appData.story || [],
+                dua: appData.dua || [], 
+                qna: appData.qna || [],
+                pdfs: appData.pdfs || [], 
+                telegram: appData.telegram || {token: '', chatId: ''}
+            };
         }
         const saved = localStorage.getItem("admin_editingData");
         if(saved) {
             const parsed = JSON.parse(saved);
-            editingData = { ...editingData, ...parsed };
-            if(!editingData.qna) editingData.qna = [];
+            if(parsed.quran) editingData.quran = parsed.quran;
+            if(parsed.hadith) editingData.hadith = parsed.hadith;
+            if(parsed.story) editingData.story = parsed.story;
+            if(parsed.dua) editingData.dua = parsed.dua;
+            if(parsed.qna) editingData.qna = parsed.qna;
+            if(parsed.pdfs) editingData.pdfs = parsed.pdfs;
+            if(parsed.telegram) editingData.telegram = parsed.telegram;
         }
     }
+    
     function syncEditingDataToStorage() { localStorage.setItem("admin_editingData", JSON.stringify(editingData)); }
-
+    
     function openAdminTab(tabId) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
         
-        if(tabId === 'quranTab') { loadQuranTopics(); }
-        if(tabId === 'hadithTab') { loadHadithTopics(); }
-        if(tabId === 'storyTab') { loadStoryTopics(); }
-        if(tabId === 'duaTab') { loadDuaTopics(); }
+        if(tabId === 'quranTab') { loadQuranTopics(); loadQuranList(); }
+        if(tabId === 'hadithTab') { loadHadithTopics(); loadHadithList(); }
+        if(tabId === 'storyTab') { loadStoryTopics(); loadStoryList(); }
+        if(tabId === 'duaTab') { loadDuaTopics(); loadDuaList(); }
         if(tabId === 'qnaTab') { loadQnaList(); }
         if(tabId === 'pdfTab') { loadPdfList(); }
         if(tabId === 'prayerTab') { loadPrayerSettings(); }
+        if(tabId === 'settingsTab') { loadThemeSettings(); loadTelegramSettingsFields(); }
     }
     document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => openAdminTab(btn.getAttribute('data-tab'))));
 
-    // ---- QnA Section (New) ----
+    // ==================== গ্লোবাল সেটিংস ====================
+    function loadTelegramSettingsFields() {
+        document.getElementById('tgBotToken').value = editingData.telegram?.token || '';
+        document.getElementById('tgChatId').value = editingData.telegram?.chatId || '';
+    }
+    function saveTelegramSettings() {
+        editingData.telegram = {
+            token: document.getElementById('tgBotToken').value.trim(),
+            chatId: document.getElementById('tgChatId').value.trim()
+        };
+        syncEditingDataToStorage();
+        showStatus("settingsTab", "✅ টেলিগ্রাম সেটিংস সেভ হয়েছে!");
+    }
+
+    // ==================== কুরআন ====================
+    function loadQuranTopics() { const s = document.getElementById('quranTopicSelect'); if(!s) return; s.innerHTML = '<option value="-1">-- নতুন টপিক তৈরি করুন --</option>'; editingData.quran.forEach((t, i) => s.innerHTML += `<option value="${i}">${escapeHtml(t.topic)}</option>`); s.value = currentQuranTopicIndex >= 0 ? currentQuranTopicIndex : "-1"; }
+    function selectQuranTopic() { currentQuranTopicIndex = parseInt(document.getElementById('quranTopicSelect').value); if(currentQuranTopicIndex >= 0) { document.getElementById('quranVerseForm').classList.remove('hidden'); loadQuranList(); resetQuranVerseForm(); } else document.getElementById('quranVerseForm').classList.add('hidden'); }
+    document.getElementById('quranTopicSelect').addEventListener('change', selectQuranTopic);
+    function showNewQuranTopicForm() { document.getElementById('quranTopicForm').classList.remove('hidden'); document.getElementById('quranTopicName').value = ''; }
+    function hideQuranTopicForm() { document.getElementById('quranTopicForm').classList.add('hidden'); }
+    function saveQuranTopic() { const n = document.getElementById('quranTopicName').value.trim(); if(!n) return; editingData.quran.push({topic: n, verses: []}); syncEditingDataToStorage(); loadQuranTopics(); hideQuranTopicForm(); currentQuranTopicIndex = editingData.quran.length - 1; document.getElementById('quranTopicSelect').value = currentQuranTopicIndex; selectQuranTopic(); }
+    function deleteQuranTopic() { if(currentQuranTopicIndex < 0) return; if(confirm("ডিলিট?")) { editingData.quran.splice(currentQuranTopicIndex, 1); syncEditingDataToStorage(); currentQuranTopicIndex = -1; loadQuranTopics(); document.getElementById('quranVerseForm').classList.add('hidden'); loadQuranList(); } }
+    function loadQuranList() { const c = document.getElementById('quranList'); if(!c) return; if(currentQuranTopicIndex < 0) { c.innerHTML = ''; return; } const t = editingData.quran[currentQuranTopicIndex]; c.innerHTML = `<h3>📖 ${escapeHtml(t.topic)}:</h3>`; if(!t.verses) t.verses = []; t.verses.forEach((v, i) => { c.innerHTML += `<div class="sub-item"><div class="item-info"><div class="item-title">${escapeHtml(v.meaning.substring(0,80))}...</div></div><div class="item-actions"><button class="btn btn-warning" onclick="editQuranVerse(${i})">এডিট</button><button class="btn btn-danger" onclick="deleteQuranVerse(${i})">ডিলিট</button></div></div>`; }); }
+    function saveQuranVerse() { if(currentQuranTopicIndex < 0) return; const idx = document.getElementById('quranVerseEditIndex').value; const nv = {arabic: document.getElementById('quranArabic').value, meaning: document.getElementById('quranMeaning').value, source: document.getElementById('quranSource').value}; if(!nv.meaning) return; if(idx == "-1") editingData.quran[currentQuranTopicIndex].verses.push(nv); else editingData.quran[currentQuranTopicIndex].verses[parseInt(idx)] = nv; syncEditingDataToStorage(); resetQuranVerseForm(); loadQuranList(); }
+    function editQuranVerse(i) { const v = editingData.quran[currentQuranTopicIndex].verses[i]; document.getElementById('quranVerseEditIndex').value = i; document.getElementById('quranArabic').value = v.arabic||''; document.getElementById('quranMeaning').value = v.meaning; document.getElementById('quranSource').value = v.source||''; }
+    function deleteQuranVerse(i) { if(confirm("ডিলিট?")) { editingData.quran[currentQuranTopicIndex].verses.splice(i, 1); syncEditingDataToStorage(); loadQuranList(); resetQuranVerseForm(); } }
+    function resetQuranVerseForm() { document.getElementById('quranVerseEditIndex').value = "-1"; document.getElementById('quranArabic').value = ''; document.getElementById('quranMeaning').value = ''; document.getElementById('quranSource').value = ''; }
+
+    // ==================== হাদিস ====================
+    function loadHadithTopics() { const s = document.getElementById('hadithTopicSelect'); if(!s) return; s.innerHTML = '<option value="-1">-- নতুন টপিক তৈরি করুন --</option>'; editingData.hadith.forEach((t, i) => s.innerHTML += `<option value="${i}">${escapeHtml(t.topic)}</option>`); s.value = currentHadithTopicIndex >= 0 ? currentHadithTopicIndex : "-1"; }
+    function selectHadithTopic() { currentHadithTopicIndex = parseInt(document.getElementById('hadithTopicSelect').value); if(currentHadithTopicIndex >= 0) { document.getElementById('hadithItemForm').classList.remove('hidden'); loadHadithList(); resetHadithItemForm(); } else document.getElementById('hadithItemForm').classList.add('hidden'); }
+    document.getElementById('hadithTopicSelect').addEventListener('change', selectHadithTopic);
+    function showNewHadithTopicForm() { document.getElementById('hadithTopicForm').classList.remove('hidden'); document.getElementById('hadithTopicName').value = ''; }
+    function hideHadithTopicForm() { document.getElementById('hadithTopicForm').classList.add('hidden'); }
+    function saveHadithTopic() { const n = document.getElementById('hadithTopicName').value.trim(); if(!n) return; editingData.hadith.push({topic: n, hadiths: []}); syncEditingDataToStorage(); loadHadithTopics(); hideHadithTopicForm(); currentHadithTopicIndex = editingData.hadith.length - 1; document.getElementById('hadithTopicSelect').value = currentHadithTopicIndex; selectHadithTopic(); }
+    function deleteHadithTopic() { if(currentHadithTopicIndex < 0) return; if(confirm("ডিলিট?")) { editingData.hadith.splice(currentHadithTopicIndex, 1); syncEditingDataToStorage(); currentHadithTopicIndex = -1; loadHadithTopics(); document.getElementById('hadithItemForm').classList.add('hidden'); loadHadithList(); } }
+    function loadHadithList() { const c = document.getElementById('hadithList'); if(!c) return; if(currentHadithTopicIndex < 0) { c.innerHTML = ''; return; } const t = editingData.hadith[currentHadithTopicIndex]; c.innerHTML = `<h3>📚 ${escapeHtml(t.topic)}:</h3>`; if(!t.hadiths) t.hadiths = []; t.hadiths.forEach((v, i) => { c.innerHTML += `<div class="sub-item"><div class="item-info"><div class="item-title">${escapeHtml(v.meaning.substring(0,80))}...</div></div><div class="item-actions"><button class="btn btn-warning" onclick="editHadithItem(${i})">এডিট</button><button class="btn btn-danger" onclick="deleteHadithItem(${i})">ডিলিট</button></div></div>`; }); }
+    function saveHadithItem() { if(currentHadithTopicIndex < 0) return; const idx = document.getElementById('hadithItemEditIndex').value; const nv = {meaning: document.getElementById('hadithMeaning').value, source: document.getElementById('hadithSource').value}; if(!nv.meaning) return; if(idx == "-1") editingData.hadith[currentHadithTopicIndex].hadiths.push(nv); else editingData.hadith[currentHadithTopicIndex].hadiths[parseInt(idx)] = nv; syncEditingDataToStorage(); resetHadithItemForm(); loadHadithList(); }
+    function editHadithItem(i) { const v = editingData.hadith[currentHadithTopicIndex].hadiths[i]; document.getElementById('hadithItemEditIndex').value = i; document.getElementById('hadithMeaning').value = v.meaning; document.getElementById('hadithSource').value = v.source||''; }
+    function deleteHadithItem(i) { if(confirm("ডিলিট?")) { editingData.hadith[currentHadithTopicIndex].hadiths.splice(i, 1); syncEditingDataToStorage(); loadHadithList(); resetHadithItemForm(); } }
+    function resetHadithItemForm() { document.getElementById('hadithItemEditIndex').value = "-1"; document.getElementById('hadithMeaning').value = ''; document.getElementById('hadithSource').value = ''; }
+
+    // ==================== গল্প ====================
+    function loadStoryTopics() { const s = document.getElementById('storyTopicSelect'); if(!s) return; s.innerHTML = '<option value="-1">-- নতুন টপিক তৈরি করুন --</option>'; editingData.story.forEach((t, i) => s.innerHTML += `<option value="${i}">${escapeHtml(t.topic)}</option>`); s.value = currentStoryTopicIndex >= 0 ? currentStoryTopicIndex : "-1"; }
+    function selectStoryTopic() { currentStoryTopicIndex = parseInt(document.getElementById('storyTopicSelect').value); if(currentStoryTopicIndex >= 0) { document.getElementById('storyItemForm').classList.remove('hidden'); loadStoryList(); resetStoryItemForm(); } else document.getElementById('storyItemForm').classList.add('hidden'); }
+    document.getElementById('storyTopicSelect').addEventListener('change', selectStoryTopic);
+    function showNewStoryTopicForm() { document.getElementById('storyTopicForm').classList.remove('hidden'); document.getElementById('storyTopicName').value = ''; }
+    function hideStoryTopicForm() { document.getElementById('storyTopicForm').classList.add('hidden'); }
+    function saveStoryTopic() { const n = document.getElementById('storyTopicName').value.trim(); if(!n) return; editingData.story.push({topic: n, stories: []}); syncEditingDataToStorage(); loadStoryTopics(); hideStoryTopicForm(); currentStoryTopicIndex = editingData.story.length - 1; document.getElementById('storyTopicSelect').value = currentStoryTopicIndex; selectStoryTopic(); }
+    function deleteStoryTopic() { if(currentStoryTopicIndex < 0) return; if(confirm("ডিলিট?")) { editingData.story.splice(currentStoryTopicIndex, 1); syncEditingDataToStorage(); currentStoryTopicIndex = -1; loadStoryTopics(); document.getElementById('storyItemForm').classList.add('hidden'); loadStoryList(); } }
+    function loadStoryList() { const c = document.getElementById('storyList'); if(!c) return; if(currentStoryTopicIndex < 0) { c.innerHTML = ''; return; } const t = editingData.story[currentStoryTopicIndex]; c.innerHTML = `<h3>📜 ${escapeHtml(t.topic)}:</h3>`; if(!t.stories) t.stories = []; t.stories.forEach((v, i) => { c.innerHTML += `<div class="sub-item"><div class="item-info"><div class="item-title">${escapeHtml(v.meaning.substring(0,80))}...</div></div><div class="item-actions"><button class="btn btn-warning" onclick="editStoryItem(${i})">এডিট</button><button class="btn btn-danger" onclick="deleteStoryItem(${i})">ডিলিট</button></div></div>`; }); }
+    function saveStoryItem() { if(currentStoryTopicIndex < 0) return; const idx = document.getElementById('storyItemEditIndex').value; const nv = {meaning: document.getElementById('storyMeaning').value, source: document.getElementById('storySource').value}; if(!nv.meaning) return; if(idx == "-1") editingData.story[currentStoryTopicIndex].stories.push(nv); else editingData.story[currentStoryTopicIndex].stories[parseInt(idx)] = nv; syncEditingDataToStorage(); resetStoryItemForm(); loadStoryList(); }
+    function editStoryItem(i) { const v = editingData.story[currentStoryTopicIndex].stories[i]; document.getElementById('storyItemEditIndex').value = i; document.getElementById('storyMeaning').value = v.meaning; document.getElementById('storySource').value = v.source||''; }
+    function deleteStoryItem(i) { if(confirm("ডিলিট?")) { editingData.story[currentStoryTopicIndex].stories.splice(i, 1); syncEditingDataToStorage(); loadStoryList(); resetStoryItemForm(); } }
+    function resetStoryItemForm() { document.getElementById('storyItemEditIndex').value = "-1"; document.getElementById('storyMeaning').value = ''; document.getElementById('storySource').value = ''; }
+
+    // ==================== দোয়া (আপডেটেড ক্যাটাগরি ও টাইপ সহ) ====================
+    function loadDuaTopics() { const s = document.getElementById('duaTopicSelect'); if(!s) return; s.innerHTML = '<option value="-1">-- নতুন টপিক তৈরি করুন --</option>'; editingData.dua.forEach((t, i) => { let badge = t.type === 'zikr' ? '[জিকির]' : '[দৈনিক]'; s.innerHTML += `<option value="${i}">${badge} ${escapeHtml(t.topic)}</option>`; }); s.value = currentDuaTopicIndex >= 0 ? currentDuaTopicIndex : "-1"; }
+    function selectDuaTopic() { currentDuaTopicIndex = parseInt(document.getElementById('duaTopicSelect').value); if(currentDuaTopicIndex >= 0) { document.getElementById('duaItemForm').classList.remove('hidden'); loadDuaList(); resetDuaItemForm(); } else document.getElementById('duaItemForm').classList.add('hidden'); }
+    document.getElementById('duaTopicSelect').addEventListener('change', selectDuaTopic);
+    function showNewDuaTopicForm() { document.getElementById('duaTopicForm').classList.remove('hidden'); document.getElementById('duaTopicName').value = ''; }
+    function hideDuaTopicForm() { document.getElementById('duaTopicForm').classList.add('hidden'); }
+    function saveDuaTopic() { const n = document.getElementById('duaTopicName').value.trim(); const type = document.getElementById('duaTopicType').value; if(!n) return; editingData.dua.push({topic: n, type: type, duas: []}); syncEditingDataToStorage(); loadDuaTopics(); hideDuaTopicForm(); currentDuaTopicIndex = editingData.dua.length - 1; document.getElementById('duaTopicSelect').value = currentDuaTopicIndex; selectDuaTopic(); }
+    function deleteDuaTopic() { if(currentDuaTopicIndex < 0) return; if(confirm("ডিলিট?")) { editingData.dua.splice(currentDuaTopicIndex, 1); syncEditingDataToStorage(); currentDuaTopicIndex = -1; loadDuaTopics(); document.getElementById('duaItemForm').classList.add('hidden'); loadDuaList(); } }
+    function loadDuaList() { const c = document.getElementById('duaList'); if(!c) return; if(currentDuaTopicIndex < 0) { c.innerHTML = ''; return; } const t = editingData.dua[currentDuaTopicIndex]; c.innerHTML = `<h3>🤲 ${escapeHtml(t.topic)}:</h3>`; if(!t.duas) t.duas = []; t.duas.forEach((v, i) => { c.innerHTML += `<div class="sub-item"><div class="item-info"><div class="item-title">${escapeHtml(v.meaning.substring(0,80))}...</div></div><div class="item-actions"><button class="btn btn-warning" onclick="editDuaItem(${i})">এডিট</button><button class="btn btn-danger" onclick="deleteDuaItem(${i})">ডিলিট</button></div></div>`; }); }
+    function saveDuaItem() { if(currentDuaTopicIndex < 0) return; const idx = document.getElementById('duaItemEditIndex').value; const nv = {arabic: document.getElementById('duaArabic').value, meaning: document.getElementById('duaMeaning').value, source: document.getElementById('duaSource').value}; if(!nv.meaning) return; if(idx == "-1") editingData.dua[currentDuaTopicIndex].duas.push(nv); else editingData.dua[currentDuaTopicIndex].duas[parseInt(idx)] = nv; syncEditingDataToStorage(); resetDuaItemForm(); loadDuaList(); }
+    function editDuaItem(i) { const v = editingData.dua[currentDuaTopicIndex].duas[i]; document.getElementById('duaItemEditIndex').value = i; document.getElementById('duaArabic').value = v.arabic||''; document.getElementById('duaMeaning').value = v.meaning; document.getElementById('duaSource').value = v.source||''; }
+    function deleteDuaItem(i) { if(confirm("ডিলিট?")) { editingData.dua[currentDuaTopicIndex].duas.splice(i, 1); syncEditingDataToStorage(); loadDuaList(); resetDuaItemForm(); } }
+    function resetDuaItemForm() { document.getElementById('duaItemEditIndex').value = "-1"; document.getElementById('duaArabic').value = ''; document.getElementById('duaMeaning').value = ''; document.getElementById('duaSource').value = ''; }
+
+    // ==================== প্রশ্ন ও উত্তর ক্যাটাগরি (নতুন) ====================
     function loadQnaList() {
-        const c = document.getElementById('qnaList'); c.innerHTML = '';
+        const c = document.getElementById('qnaList'); if(!c) return; c.innerHTML = '<h3>❓ প্রশ্ন-উত্তর তালিকা:</h3>';
+        if(!editingData.qna || editingData.qna.length === 0) { c.innerHTML += '<p style="color:gray;">নাই</p>'; return; }
         editingData.qna.forEach((q, i) => {
-            c.innerHTML += `<div class="sub-item"><div class="item-info"><strong>${escapeHtml(q.question)}</strong></div>
-            <div class="item-actions"><button class="btn btn-warning" onclick="editQnaItem(${i})">এডিট</button><button class="btn btn-danger" onclick="deleteQnaItem(${i})">ডিলিট</button></div></div>`;
+            c.innerHTML += `<div class="sub-item"><div class="item-info"><div class="item-title">${escapeHtml(q.question)}</div></div><div class="item-actions"><button class="btn btn-warning" onclick="editQnaItem(${i})">এডিট</button><button class="btn btn-danger" onclick="deleteQnaItem(${i})">ডিলিট</button></div></div>`;
         });
     }
     function saveQnaItem() {
         const idx = document.getElementById('qnaItemEditIndex').value;
-        const nq = { question: document.getElementById('qnaQuestion').value, answer: document.getElementById('qnaAnswer').value, source: document.getElementById('qnaSource').value };
-        if(!nq.question || !nq.answer) return alert("প্রশ্ন ও উত্তর দিন!");
-        if(idx == "-1") editingData.qna.push(nq); else editingData.qna[idx] = nq;
+        const nq = {question: document.getElementById('qnaQuestion').value.trim(), answer: document.getElementById('qnaAnswer').value.trim(), source: document.getElementById('qnaSource').value.trim()};
+        if(!nq.question || !nq.answer) return alert("প্রশ্ন ও উত্তর লিখুন!");
+        if(idx == "-1") editingData.qna.push(nq); else editingData.qna[parseInt(idx)] = nq;
         syncEditingDataToStorage(); resetQnaForm(); loadQnaList();
     }
-    function editQnaItem(i) {
-        const q = editingData.qna[i];
-        document.getElementById('qnaItemEditIndex').value = i;
-        document.getElementById('qnaQuestion').value = q.question;
-        document.getElementById('qnaAnswer').value = q.answer;
-        document.getElementById('qnaSource').value = q.source || '';
-    }
-    function deleteQnaItem(i) { if(confirm("ডিলিট?")) { editingData.qna.splice(i, 1); syncEditingDataToStorage(); loadQnaList(); } }
+    function editQnaItem(i) { const q = editingData.qna[i]; document.getElementById('qnaItemEditIndex').value = i; document.getElementById('qnaQuestion').value = q.question; document.getElementById('qnaAnswer').value = q.answer; document.getElementById('qnaSource').value = q.source||''; }
+    function deleteQnaItem(i) { if(confirm("ডিলিট?")) { editingData.qna.splice(i, 1); syncEditingDataToStorage(); loadQnaList(); resetQnaForm(); } }
     function resetQnaForm() { document.getElementById('qnaItemEditIndex').value = "-1"; document.getElementById('qnaQuestion').value = ''; document.getElementById('qnaAnswer').value = ''; document.getElementById('qnaSource').value = ''; }
 
-    // ---- Dua Tab (Updated) ----
-    function loadDuaTopics() {
-        const s = document.getElementById('duaTopicSelect'); s.innerHTML = '<option value="-1">-- নতুন টপিক তৈরি করুন --</option>';
-        editingData.dua.forEach((t, i) => {
-            let badge = t.type === 'zikr' ? '[জিকির]' : '[দৈনিক]';
-            s.innerHTML += `<option value="${i}">${badge} ${escapeHtml(t.topic)}</option>`;
-        });
-        s.value = currentDuaTopicIndex >= 0 ? currentDuaTopicIndex : "-1";
+    // ==================== পিডিএফ ====================
+    function loadPdfList() {
+        const c = document.getElementById('pdfList'); if(!c) return; c.innerHTML = '<h3>📕 পিডিএফ লিস্ট:</h3>';
+        if(!editingData.pdfs || editingData.pdfs.length === 0) { c.innerHTML += '<p style="color:gray;">নাই</p>'; return; }
+        editingData.pdfs.forEach((p, i) => { c.innerHTML += `<div class="sub-item"><img src="${escapeHtml(p.thumb)}" class="thumb-preview"><div class="item-info" style="margin-left:10px;"><div class="item-title">${escapeHtml(p.title)}</div></div><div class="item-actions"><button class="btn btn-warning" onclick="editPdfItem(${i})">এডিট</button><button class="btn btn-danger" onclick="deletePdfItem(${i})">ডিলিট</button></div></div>`; });
     }
-    document.getElementById('duaTopicSelect').addEventListener('change', () => {
-        currentDuaTopicIndex = parseInt(document.getElementById('duaTopicSelect').value);
-        if(currentDuaTopicIndex >= 0) { document.getElementById('duaItemForm').classList.remove('hidden'); loadDuaList(); resetDuaItemForm(); } 
-        else document.getElementById('duaItemForm').classList.add('hidden');
-    });
-    function showNewDuaTopicForm() { document.getElementById('duaTopicForm').classList.remove('hidden'); }
-    function hideDuaTopicForm() { document.getElementById('duaTopicForm').classList.add('hidden'); }
-    function saveDuaTopic() {
-        const n = document.getElementById('duaTopicName').value.trim();
-        const type = document.getElementById('duaTopicType').value;
-        if(!n) return;
-        editingData.dua.push({topic: n, type: type, duas: []});
-        syncEditingDataToStorage(); loadDuaTopics(); hideDuaTopicForm();
-        currentDuaTopicIndex = editingData.dua.length - 1; document.getElementById('duaTopicSelect').value = currentDuaTopicIndex;
-        document.getElementById('duaTopicSelect').dispatchEvent(new Event('change'));
+    function savePdfItem() {
+        const idx = document.getElementById('pdfItemEditIndex').value;
+        const nv = {title: document.getElementById('pdfTitle').value.trim(), thumb: document.getElementById('pdfThumb').value.trim(), url: document.getElementById('pdfUrl').value.trim()};
+        if(!nv.title || !nv.url) return;
+        if(idx == "-1") editingData.pdfs.push(nv); else editingData.pdfs[parseInt(idx)] = nv;
+        syncEditingDataToStorage(); resetPdfForm(); loadPdfList();
     }
-    function deleteDuaTopic() {
-        if(currentDuaTopicIndex < 0) return;
-        if(confirm("ডিলিট?")) { editingData.dua.splice(currentDuaTopicIndex, 1); syncEditingDataToStorage(); currentDuaTopicIndex = -1; loadDuaTopics(); document.getElementById('duaItemForm').classList.add('hidden'); loadDuaList(); }
-    }
-    function loadDuaList() {
-        const c = document.getElementById('duaList'); c.innerHTML = '';
-        if(currentDuaTopicIndex < 0) return;
-        const t = editingData.dua[currentDuaTopicIndex];
-        t.duas.forEach((v, i) => {
-            c.innerHTML += `<div class="sub-item"><div class="item-info">${escapeHtml(v.meaning.substring(0,50))}...</div>
-            <div class="item-actions"><button class="btn btn-warning" onclick="editDuaItem(${i})">এডিট</button><button class="btn btn-danger" onclick="deleteDuaItem(${i})">ডিলিট</button></div></div>`;
-        });
-    }
-    function saveDuaItem() {
-        const idx = document.getElementById('duaItemEditIndex').value;
-        const nv = {arabic: document.getElementById('duaArabic').value, meaning: document.getElementById('duaMeaning').value, source: document.getElementById('duaSource').value};
-        if(!nv.meaning) return;
-        if(idx == "-1") editingData.dua[currentDuaTopicIndex].duas.push(nv); else editingData.dua[currentDuaTopicIndex].duas[idx] = nv;
-        syncEditingDataToStorage(); resetDuaItemForm(); loadDuaList();
-    }
-    function editDuaItem(i) {
-        const v = editingData.dua[currentDuaTopicIndex].duas[i];
-        document.getElementById('duaItemEditIndex').value = i;
-        document.getElementById('duaArabic').value = v.arabic||''; document.getElementById('duaMeaning').value = v.meaning; document.getElementById('duaSource').value = v.source||'';
-    }
-    function deleteDuaItem(i) { if(confirm("ডিলিট?")) { editingData.dua[currentDuaTopicIndex].duas.splice(i, 1); syncEditingDataToStorage(); loadDuaList(); } }
-    function resetDuaItemForm() { document.getElementById('duaItemEditIndex').value = "-1"; document.getElementById('duaArabic').value = ''; document.getElementById('duaMeaning').value = ''; document.getElementById('duaSource').value = ''; }
+    function editPdfItem(i) { const p = editingData.pdfs[i]; document.getElementById('pdfItemEditIndex').value = i; document.getElementById('pdfTitle').value = p.title||''; document.getElementById('pdfThumb').value = p.thumb||''; document.getElementById('pdfUrl').value = p.url||''; }
+    function deletePdfItem(i) { if(confirm("ডিলিট?")) { editingData.pdfs.splice(i, 1); syncEditingDataToStorage(); loadPdfList(); resetPdfForm(); } }
+    function resetPdfForm() { document.getElementById('pdfItemEditIndex').value = "-1"; document.getElementById('pdfTitle').value = ''; document.getElementById('pdfThumb').value = ''; document.getElementById('pdfUrl').value = ''; }
 
-    // (কুরআন, হাদিস, গল্প, পিডিএফ, সেটিংস আগের মতই আছে, শুধু সংক্ষেপে লিখা হলো যেন কোড সাইজ বাড়ে না)
-    // Helpers
-    function escapeHtml(str) { if(!str) return ''; return String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
-    function downloadDataJs() { const code = `const appData = ${JSON.stringify(editingData, null, 4)};`; const blob = new Blob([code], {type: "application/javascript"}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = "data.js"; a.click(); }
-    function generateAndCopyCode() { const code = `const appData = ${JSON.stringify(editingData, null, 4)};`; document.getElementById('outputCode').innerText = code; navigator.clipboard.writeText(code); alert("কপি হয়েছে!"); }
+    // ==================== নামাজ ও সেটিংস ====================
+    function loadPrayerSettings() { const c = document.getElementById('prayerSettingsList'); if(!c) return; c.innerHTML = ''; prayerSettings.forEach((p, i) => { c.innerHTML += `<div class="prayer-item-row"><input type="text" value="${escapeHtml(p.icon)}" id="prayerIcon${i}" style="width: 60px;"><input type="text" value="${escapeHtml(p.name)}" id="prayerName${i}" style="flex: 2;"><button class="btn btn-danger" onclick="removePrayer(${i})" style="width: auto;">✖ ডিলিট</button></div>`; }); }
+    function addPrayer() { prayerSettings.push({ id: "new_" + Date.now(), name: "নতুন নামাজ", icon: "🕌" }); loadPrayerSettings(); }
+    function removePrayer(i) { if(confirm("ডিলিট?")) { prayerSettings.splice(i, 1); loadPrayerSettings(); } }
+    function savePrayerSettings() { const ns = []; for(let i=0; i<prayerSettings.length; i++) { ns.push({ id: prayerSettings[i].id, name: document.getElementById(`prayerName${i}`).value, icon: document.getElementById(`prayerIcon${i}`).value }); } prayerSettings = ns; localStorage.setItem("admin_prayerSettings", JSON.stringify(prayerSettings)); showStatus("prayerTab", "✅ সেভ হয়েছে!"); }
     
-    // (You can keep the rest of your original Quran/Hadith/Story functions here exactly as they were)
-    window.onload = () => { loadDataFromStorage(); loadQuranTopics(); };
+    function escapeHtml(str) { if(!str) return ''; return String(str).replace(/[&<>]/g, function(m) { if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m; }); }
+    function showStatus(tabId, msg) { const tab = document.getElementById(tabId); let s = tab.querySelector('.status-msg'); if(!s) { s = document.createElement('div'); s.className = 'status-msg'; tab.prepend(s); } s.innerHTML = msg; s.style.display = 'block'; setTimeout(() => s.style.display = 'none', 2000); }
+    function saveThemeSettings() { localStorage.setItem("admin_themeSettings", JSON.stringify({ primaryColor: document.getElementById('primaryColor').value, headerText: document.getElementById('headerText').value })); showStatus("settingsTab", "✅ থিম সেভ হয়েছে!"); }
+    function loadThemeSettings() { const s = localStorage.getItem("admin_themeSettings"); if(s) { const t = JSON.parse(s); if(t.primaryColor) document.getElementById('primaryColor').value = t.primaryColor; if(t.headerText) document.getElementById('headerText').value = t.headerText; } }
+    function downloadBackup() { const dataStr = JSON.stringify({ quran: editingData.quran, hadith: editingData.hadith, story: editingData.story, dua: editingData.dua, qna: editingData.qna, pdfs: editingData.pdfs, telegram: editingData.telegram, prayerSettings: prayerSettings }, null, 2); const url = URL.createObjectURL(new Blob([dataStr], {type: "application/json"})); const a = document.createElement('a'); a.href = url; a.download = `backup_${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(url); }
+    function restoreBackup() { const f = document.getElementById('backupFile'); if(!f.files[0]) return; const reader = new FileReader(); reader.onload = function(e) { try { const b = JSON.parse(e.target.result); if(b.quran) editingData.quran = b.quran; if(b.hadith) editingData.hadith = b.hadith; if(b.story) editingData.story = b.story; if(b.dua) editingData.dua = b.dua; if(b.qna) editingData.qna = b.qna; if(b.pdfs) editingData.pdfs = b.pdfs; if(b.telegram) editingData.telegram = b.telegram; if(b.prayerSettings) prayerSettings = b.prayerSettings; syncEditingDataToStorage(); localStorage.setItem("admin_prayerSettings", JSON.stringify(prayerSettings)); alert("✅ রিস্টোর সম্পন্ন!"); location.reload(); } catch(err) { alert("ভুল ফাইল!"); } }; reader.readAsText(f.files[0]); }
+    function downloadDataJs() { const finalCode = `const appData = ${JSON.stringify(editingData, null, 4)};`; const url = URL.createObjectURL(new Blob([finalCode], {type: "application/javascript"})); const a = document.createElement('a'); a.href = url; a.download = "data.js"; a.click(); URL.revokeObjectURL(url); }
+    function generateAndCopyCode() { const finalCode = `const appData = ${JSON.stringify(editingData, null, 4)};`; document.getElementById('outputCode').innerText = finalCode; navigator.clipboard.writeText(finalCode).then(() => { showStatus("settingsTab", "✅ কোড কপি হয়েছে!"); }); }
+
+    loadDataFromStorage();
+    window.onload = () => { loadQuranTopics(); loadHadithTopics(); loadStoryTopics(); loadDuaTopics(); loadQnaList(); loadPdfList(); loadPrayerSettings(); loadThemeSettings(); loadTelegramSettingsFields(); };
 </script>
 </body>
 </html>
